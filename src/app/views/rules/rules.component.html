@@ -1,21 +1,20 @@
 <div class="rulesDiv">
     <p>
         &#8250; Le gomoku se joue sur un plateau quadrillé de 19 lignes horizontales et 19 lignes verticales 
-        formant, comme un jeu de go, 361 intersections. Le nombre de pions est toutefois nettement 
+        formant, comme un jeu de go, 361 intersections. Le nombre de pierres est toutefois nettement 
         inférieur, puisque les joueurs n'en reçoivent que 60, qu'ils posent un à un et à tour de 
         rôle sur les intersections.
     </p>
     <p>
-        &#8250; Le joueur qui a choisi ou obtenu par un tirage au sort les pions noirs 
-        (et que l'on appelle Noir par convention) joue toujours le premier en plaçant 
-        son premier pion sur l'intersection centrale du damier. Blanc doit alors poser 
-        son pion sur l'une des 8 intersections adjacentes au pion noir. Noir fait la 
+        &#8250; Le joueur qui a obtenu par un tirage au sort les pierres noirs joue toujours 
+        le premier en plaçant sa première pierre sur l'intersection centrale du damier. Blanc doit alors poser 
+        sa pierre sur l'une des 8 intersections adjacentes à la pierre noir. Noir fait la 
         même chose, et ainsi de suite, le but du jeu étant de prendre l'adversaire de 
-        vitesse et de réussir le premier à aligner 5 pions de sa couleur, dans les trois 
+        vitesse et de réussir le premier à aligner 5 pierres de sa couleur, dans les trois 
         directions possibles : vertical, horizontal ou diagonal.
     </p>
     <p>
-        &#8250; Si les deux joueurs placent tous leurs pions sans qu'aucun ne parvienne à réaliser 
+        &#8250; Si les deux joueurs placent toutes leurs pierres sans qu'aucun ne parvienne à réaliser 
         un alignement, le jeu est déclaré nul, et ils recommencent.
         <!-- Une partie se dispute 
         généralement en deux manches, afin que celui qui a commencé avec les noirs ait les 
@@ -25,6 +24,12 @@
         &#8250; Vous pouvez capturer des paires (et seulement des paires) de pierres ennemies en bloquant
         les deux côtés d’un alignement de 2 pierres ennemies.
         Si vous parvenez à faire 5 captures (capturant ainsi 10 pierres) vous gagnez instantanément.
+    </p>
+    <p>
+        &#8250; Attention si vous parvenez à aligner cinq pierres votre victoire n'est pas immédiate,
+        votre adversaire à un tour pour tenter de capturer l'une des pierres qui forment l'alignement de 5.
+        Si une capture est effectuée sur cet alignement non seulement la victoire n'est pas valide, mais en plus
+        si c'est la cinquième capture l'adversaire est déclaré vainqueur.
     </p>
     <p>
         &#8250; Vous devez respecter la règle des doubles trois, empêchent un joueur de mettre une pierre qui va
