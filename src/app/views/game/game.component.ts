@@ -180,7 +180,6 @@ export class GameComponent {
   }
 
   public loopTimer() {
-    console.log(this.iaMove);
     
     if (this.limitTimerPlayer1 || this.limitTimerPlayer2 || this.limitTimerIa) {
       if (this.player1Turn) {
@@ -220,6 +219,8 @@ export class GameComponent {
         }
 
         if (this.iaMove) {
+          console.log(this.iaMove);
+          
           this.iaTurn = false;
           this.player1Turn = true;
           this.limitTimerPlayer1 = Date.now() + this.global.timer;
