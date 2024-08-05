@@ -1,0 +1,24 @@
+@import "../../../styles/variables";
+@import "../../../styles/animations";
+
+.rulesDiv {
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 70vh;
+    margin: auto;
+    margin-top: 13vh;
+    backdrop-filter: blur(100px);
+    z-index: 10;
+    padding: 20px;
+    overflow-y: auto;
+    animation: fadeinBottomToTop 1s forwards;
+    border-radius: 10px;
+    
+    p {
+        font-size: 17px;
+        font-family: serif;
+        margin-bottom: 50px;
+    }
+}

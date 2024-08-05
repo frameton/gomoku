@@ -1,0 +1,34 @@
+<!-- <div class="backgroundNavBar"></div> -->
+
+<nav class="navbar" (window:resize)="onResize($event)" #navBar>
+        <div class="title">
+            <h3 routerLink="/game">Gomoku</h3>
+            <!-- <div class="separator"></div> -->
+        </div>
+
+        <div  class="menusDiv">
+            <!-- <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
+                <a [routerLink]="'/home'" routerLinkActive="active" >Home</a>
+            </div> -->
+            <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
+                <a [routerLink]="'/game'" routerLinkActive="active" >Jouer</a>
+            </div>
+            <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
+                <a [routerLink]="'/rules'" routerLinkActive="active" >Règles du jeu</a>
+            </div>
+            <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
+                <a [routerLink]="'/settings'" routerLinkActive="active" >Paramètres</a>
+            </div>
+        </div>
+
+        <div class="app-navbar-user">
+            <div class="user-name" (click)="setNewUsername()">
+                {{ global.username }}
+            </div>
+            <div class="separator"></div>
+            <button class="logoutBtn" (click)="onClickLogout()">
+                <mat-icon mat-icon>logout</mat-icon>
+            </button>
+        </div>
+</nav>
+<app-change-username *ngIf="global.changeUsername"></app-change-username>

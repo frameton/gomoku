@@ -1,0 +1,12 @@
+<div class="changeUsernameDiv" #changeUsernameDiv>
+    <div class="title" #title>
+        Choisissez un pseudo
+    </div>
+
+    <form class="usernameForm" [formGroup]="newUsernameForm">
+        <input placeholder="Pseudo" type="text" formControlName="username" autofocus/>
+        <div class="btnDiv">
+            <button type="button" class="formBtn" [disabled]="newUsernameForm.controls['username'].invalid || !newUsernameForm.controls['username'].value" (click)="onSubmitForm()">Valider</button>
+        </div>
+    </form>
+</div>

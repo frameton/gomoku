@@ -1,0 +1,83 @@
+<div class="settingsDiv">
+    <h2>Choisissez le timer qui vous convient (en secondes)</h2>
+    <div class="timerListDiv">
+        <div class="lineListDiv">
+            <div [ngClass]="global.timer == 5000 ? 'timerDivActive' : 'timerDiv'" (click)="changeTimer(5000)">
+                {{ 5000 |date:'ss.SSS' }}
+            </div>
+            <div [ngClass]="global.timer == 10000 ? 'timerDivActive' : 'timerDiv'" (click)="changeTimer(10000)">
+                {{ 10000 |date:'ss.SSS' }}
+            </div>
+            <div [ngClass]="global.timer == 15000 ? 'timerDivActive' : 'timerDiv'" (click)="changeTimer(15000)">
+                {{ 15000 |date:'ss.SSS' }}
+            </div>
+        </div>
+        <div class="lineListDiv">
+            <div [ngClass]="global.timer == 30000 ? 'timerDivActive' : 'timerDiv'" (click)="changeTimer(30000)">
+                {{ 30000 |date:'ss.SSS' }}
+            </div>
+            <div [ngClass]="global.timer == 45000 ? 'timerDivActive' : 'timerDiv'" (click)="changeTimer(45000)">
+                {{ 45000 |date:'ss.SSS' }}
+            </div>
+            <div [ngClass]="global.timer == 59000 ? 'timerDivActive' : 'timerDiv'" (click)="changeTimer(59000)">
+                {{ 59000 |date:'ss.SSS' }}
+            </div>
+        </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <h2>Choisissez le nombre de pions qui vous convient</h2>
+    <div class="pawnListDiv">
+        <div class="lineListDiv">
+            <div [ngClass]="global.pawnsNumber == 10 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(10)">
+                <h3>10</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 20 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(20)">
+                <h3>20</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 40 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(40)">
+                <h3>40</h3>
+            </div>
+        </div>
+        <div class="lineListDiv">
+            <div [ngClass]="global.pawnsNumber == 60 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(60)">
+                <h3>60</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 361 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(361)">
+                <h3>361</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 9999 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(9999)">
+                <h3>9999</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="separator"></div>
+
+    <h2>Choisissez vos propres règles</h2>
+    <div class="rulesListDiv">
+        <div class="lineListDiv">
+            <div [ngClass]="global.doubleThreesRules ? 'rulesDivActive' : 'rulesDiv'" (click)="changeDoubleThreesRules()">
+                <h3>Double Threes</h3>
+            </div>
+            <div [ngClass]="global.capturesRules ? 'rulesDivActive' : 'rulesDiv'" (click)="changeCaptureRules()">
+                <h3>Captures</h3>
+            </div>
+            <!-- <div [ngClass]="global.pawnsNumber == 40 ? 'rulesDivActive' : 'rulesDiv'" (click)="changePawns(40)">
+                <h3>40</h3>
+            </div> -->
+        </div>
+        <!-- <div class="lineListDiv">
+            <div [ngClass]="global.pawnsNumber == 60 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(60)">
+                <h3>60</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 361 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(361)">
+                <h3>361</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 9999 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(9999)">
+                <h3>9999</h3>
+            </div>
+        </div> -->
+    </div>
+</div>

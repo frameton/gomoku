@@ -1,0 +1,20 @@
+<app-nav-bar *ngIf="!global.welcomePage && validWidth && validHeight"></app-nav-bar>
+<div [ngClass]="(validWidth && validHeight) ? 'page-wrap' : 'page-wrap-hidden'" (window:resize)="onResize($event)">
+  <router-outlet></router-outlet>  
+</div>
+<div class="page-need-resize" *ngIf="!validWidth || !validHeight" (window:resize)="onResize($event)">
+  <div class="divType1" *ngIf="!validHeight">
+    <mat-icon class="iconUp">expand_less</mat-icon>
+  </div>
+
+  <div class="divType2">
+    <mat-icon *ngIf="!validWidth" class="iconLeft">chevron_left</mat-icon>
+    <h2>Agrandissez la fenêtre</h2>
+    <mat-icon *ngIf="!validWidth" class="iconRight">chevron_right</mat-icon>
+  </div>
+
+  <div class="divType1" *ngIf="!validHeight">
+    <mat-icon class="iconDown">expand_more</mat-icon>
+  </div>
+</div>
+<app-footer *ngIf="!global.welcomePage && validWidth && validHeight"></app-footer>

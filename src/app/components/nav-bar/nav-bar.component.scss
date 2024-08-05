@@ -1,0 +1,270 @@
+@import "../../../styles/variables";
+@import "../../../styles/animations.scss";
+
+.backgroundNavBar {
+    display: flex;
+    width: 100%;
+    height: 60px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.navbar {
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 90vw;
+    height: 6vh;
+    top: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+    background-color: $black;
+    // padding: 0 3rem;
+    // gap: 2rem;
+    transition: 0.2s;
+    margin: auto;
+    z-index: 25;
+    font-size: 0.8rem;
+    border-radius: 35px;
+    overflow: hidden;
+    animation: fadein 1s forwards;
+
+    .title {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        height: 100%;
+        width: 150px;
+        transition: width 0.2s, height 0.2s;
+        padding-left: 20px;
+        padding-right: 20px;
+
+        h3 {
+            color: $white;
+            font-size: 25px;
+            font-weight: 300;
+            font-family: serif;
+            margin: 0;
+            transition: width 0.5s, height 0.2s, font-size 0.2s;
+            opacity: 0;
+            animation: fadeinLeftToRight 1s;
+            animation-delay: 1s;
+            animation-fill-mode: forwards;
+            letter-spacing: 5px;
+            transition: 0.2s;
+            &:hover {
+                cursor: pointer;
+                color: $blue3;
+                font-size: 25px;
+                font-weight: 400;
+                letter-spacing: 10px;
+            }
+        }
+        .separator {
+            display: flex;
+            width: 0px;
+            height: 20px;
+            border: solid 1.5px $gray4;
+            margin-left: 10px;
+        }
+    }
+
+    .menusDiv {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        height: 100%;
+        width: 50%;
+        align-items: center;
+        transition: 0.2s;
+        overflow: visible;
+
+        .menu {
+            position: relative;
+            padding-left: 5px;
+            padding-right: 5px;
+           
+            a {
+                display: inline-block;
+                position: relative;
+                color: $gray3;
+                font-size: 15px;
+                font-weight: 300;
+                font-family: arial;
+                letter-spacing: 0.10em;
+                padding: 5px 15px;
+                position: relative;
+                text-decoration: none !important;
+                transition: 0.1s;
+
+                &:hover, &:focus {
+                    color: $blue4;
+                    font-weight: bolder;
+                }
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    transform: scaleX(0);
+                    height: 2.5px;
+                    bottom: 0;
+                    left: 0;
+                    background-color: $blue3;
+                    transform-origin: bottom center;
+                    transition: transform 0.25s ease-out;
+                }
+                &:hover::after {
+                    transform: scaleX(1);
+                    transform-origin: bottom center;
+                }
+
+            }
+            .active {
+                color: $blue4 !important;
+                font-weight: bold !important;
+                border: none !important;
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 2.5px;
+                    bottom: 0;
+                    left: 0;
+                    background-color: $blue3;
+                    transform-origin: bottom center;
+                    transition: transform 0.25s ease-out;
+                    transform: scaleX(1);
+                }
+            }   
+        }
+
+        .reduceMenu {
+            position: relative;
+            padding-left: 5px;
+            padding-right: 5px;
+
+            a {
+                display: inline-block;
+                position: relative;
+                color: $gray3;
+                font-size: 12px;
+                font-weight: 300;
+                font-family: arial;
+                letter-spacing: 0.06em;
+                padding: 3px 5px;
+                position: relative;
+                text-decoration: none;
+                transition: 0.1s;
+
+                &:hover, &:focus {
+                    color: $blue4;
+                    font-weight: bolder;
+                }
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    transform: scaleX(0);
+                    height: 2.5px;
+                    bottom: 0;
+                    left: 0;
+                    background-color: $blue3;
+                    transform-origin: bottom center;
+                    transition: transform 0.25s ease-out;
+                }
+                &:hover::after {
+                    transform: scaleX(1);
+                    transform-origin: bottom center;
+                }
+
+            }
+            .active {
+                color: $blue4 !important;
+                font-weight: bold !important;
+                border: none !important;
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 2.5px;
+                    bottom: 0;
+                    left: 0;
+                    background-color: $blue3;
+                    transform-origin: bottom center;
+                    transition: transform 0.25s ease-out;
+                    transform: scaleX(1);
+                }
+            }
+        }
+    }
+
+    // .active {
+    //     color: $blue4;
+    //     font-weight: 800;
+    //     font-size: 1.2em;
+    //     border-bottom: 5px solid $blue4;
+    // }
+
+    .app-navbar-user {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        color: $white;
+        border-radius: 3px;
+        padding: 0px;
+        transition: 0.1s;
+        width: 150px;
+        padding-left: 20px;
+
+        .user-name {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: fit-content;
+            border-radius: 5px;
+            font-family: arial;
+            font-size: 17px;
+            color: $gray2;
+            padding: 2px;
+            transition: 0.2s;
+
+            &:hover {
+                cursor: pointer;
+                background-color: $gray2;
+                color: $black;
+            }
+        }
+
+        .separator {
+            display: flex;
+            width: 0px;
+            height: 20px;
+            border: solid 1.5px $gray3;
+            margin-left: 10px;
+        }
+
+        .logoutBtn {
+            transition: 0.2s !important;
+            transform: unset !important;
+            margin-left: 5px;
+            color: $gray3;
+            background-color: transparent;
+            border: none;
+            margin-top: 3px;
+            &:hover {
+                cursor: pointer;
+                color: $red2 !important;
+            }
+        }
+
+    }
+}
