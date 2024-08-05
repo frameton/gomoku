@@ -1101,10 +1101,10 @@ export class GameComponent {
   }
 
 
-  public callRustAi(lineIndex: number, caseIndex: number, player1Capture: number, aiCapture: number, player1Pawns: number, aiPawns: number, player1Begin: boolean, firstTurn: boolean) {
+  public callRustAi(lineIndex: number, caseIndex: number, player1Capture: number, aiCapture: number, player1Stones: number, aiStones: number, player1Begin: boolean, firstTurn: boolean) {
 
     // let result = await invoke('greet', { name: 'World' });
-    invoke('ai_move', { lineIndex: lineIndex, caseIndex: caseIndex, player1Capture: player1Capture, aiCapture: aiCapture, player1Pawns: player1Pawns, aiPawns: aiPawns, player1Begin: player1Begin, firstTurn: firstTurn})
+    invoke('ai_move', { lineIndex: lineIndex, caseIndex: caseIndex, player1Capture: player1Capture, aiCapture: aiCapture, player1Stones: player1Stones, aiStones: aiStones, player1Begin: player1Begin, firstTurn: firstTurn})
     .then((response) => this.iaMove = response)
     
 
