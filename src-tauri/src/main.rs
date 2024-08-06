@@ -2,48 +2,13 @@
 
 extern crate core;
 extern crate tauri;
-use std::{thread, time::Duration};
-
-static mut COUNTER: u32 = 0;
-static mut AI_COLOR: i32 = -1;
-static mut MAP: [[i32; 19]; 19] = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-];
 
 
 #[tauri::command]
-fn ai_move(line_index: i32, case_index: i32, player1_capture: i32, ai_capture: i32, player1_stones: i32, ai_stones: i32, player1_begin: bool, first_turn: bool) -> String {
-    unsafe {
-      if AI_COLOR == -1 {
-        if first_turn == true {
-          AI_COLOR = 1;
-        }
-        else {
-          AI_COLOR = 2;
-        }
-      }
-      COUNTER = COUNTER + 1;
-    }
-    // thread::sleep(Duration::from_millis(5000));
-    format!("Params is, line_index: {}, case_index: {}, player1_capture: {}, ia_capture: {}, player1_stones: {}, ia_stones: {}, player1_begin: {}, first_turn: {}", line_index, case_index, player1_capture, ai_capture, player1_stones, ai_stones, player1_begin, first_turn)
+fn ai_move(_map: [[i32; 19]; 19], _player1_capture: i32, _ai_capture: i32, _player1_stones: i32, _ai_stones: i32, _current_color: i32) -> [i32; 2] {
+    
+    let result: [i32; 2] = [0, 0];
+    result
 }
 
 pub fn main() {

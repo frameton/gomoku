@@ -162,16 +162,20 @@ export class GameComponent {
   }
 
   public randomPlayerBegin(index: number) {
+    
     let randomBegin = Math.floor(Math.random() * 2);
     if (randomBegin == 0) {
+      
       this.player1Begin = true;
       this.player1Turn = true;
     }
     else {
       this.player1Begin = false;
       if (index == 1) {
+        
         this.iaTurn = true;
-        this.callRustAi(-1, -1, this.player1Capture, this.iaCapture, this.player1Pawns, this.iaPawns, this.player1Begin, this.firstTurn);
+        this.pushCase(9, 9);
+        // this.callRustAi();
       }
       else {
         this.player2Turn = true;
@@ -180,6 +184,8 @@ export class GameComponent {
   }
 
   public loopTimer() {
+    // console.log("loop");
+    
     
     if (this.limitTimerPlayer1 || this.limitTimerPlayer2 || this.limitTimerIa) {
       if (this.player1Turn) {
@@ -195,7 +201,7 @@ export class GameComponent {
           else {
             this.iaTurn = true;
             this.limitTimerIa = Date.now() + this.timeForPlayIa;
-            this.callRustAi(-1, -1, this.player1Capture, this.iaCapture, this.player1Pawns, this.iaPawns, this.player1Begin!, this.firstTurn);
+            this.callRustAi();
           }
         }
       }
@@ -234,14 +240,14 @@ export class GameComponent {
     if (index == 1) {
       this.startGameDiv.nativeElement.classList.add("fastFadeout");
       this.player2Div.nativeElement.classList.add("fastFadeout");
-      setTimeout(() => this.gameStarted = true, 1000);
+      this.gameStarted = true;
       setTimeout(() => this.randomPlayerBegin(1), 2000);
     }
     if (index == 2) {
       this.twoPlayersMode = true;
       this.startGameDiv.nativeElement.classList.add("fastFadeout");
-      setTimeout(() => this.randomPlayerBegin(2), 1000);
-      setTimeout(() => this.gameStarted = true, 1500);
+      this.gameStarted = true;
+      setTimeout(() => this.randomPlayerBegin(2), 2000);
     }
   }
 
@@ -959,7 +965,7 @@ export class GameComponent {
           this.player1Turn = false;
           this.iaTurn = true;
           this.limitTimerIa = Date.now() + this.timeForPlayIa;
-          this.callRustAi(lineIndex, caseIndex, this.player1Capture, this.iaCapture, this.player1Pawns, this.iaPawns, this.player1Begin, this.firstTurn);
+          this.callRustAi();
         }
       }
       else if (this.player1Turn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
@@ -991,7 +997,7 @@ export class GameComponent {
           this.player1Turn = false;
           this.iaTurn = true;
           this.limitTimerIa = Date.now() + this.timeForPlayIa;
-          this.callRustAi(lineIndex, caseIndex, this.player1Capture, this.iaCapture, this.player1Pawns, this.iaPawns, this.player1Begin!, this.firstTurn);
+          this.callRustAi();
         }
       }
       else if (this.iaTurn && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
@@ -1102,16 +1108,45 @@ export class GameComponent {
   }
 
 
-  public callRustAi(lineIndex: number, caseIndex: number, player1Capture: number, aiCapture: number, player1Stones: number, aiStones: number, player1Begin: boolean, firstTurn: boolean) {
+  public format_map(map: Array<number>[]) {
 
-    // let result = await invoke('greet', { name: 'World' });
-    invoke('ai_move', { lineIndex: lineIndex, caseIndex: caseIndex, player1Capture: player1Capture, aiCapture: aiCapture, player1Stones: player1Stones, aiStones: aiStones, player1Begin: player1Begin, firstTurn: firstTurn})
-    .then((response) => this.iaMove = response)
+    for (let lineIndex in map) {
+      for (let caseIndex in map[lineIndex]) {
+        if (map[lineIndex][caseIndex] < 0) {
+          map[lineIndex][caseIndex] = 0;
+        }
+        else if (map[lineIndex][caseIndex] == 3 || map[lineIndex][caseIndex] == 5) {
+          map[lineIndex][caseIndex] = 1;
+        }
+        else if (map[lineIndex][caseIndex] == 2 || map[lineIndex][caseIndex] == 4) {
+          map[lineIndex][caseIndex] = 2;
+        }
+      }
+    }
+
+    return map;
+  }
+
+
+  public callRustAi() {
+    let currentColor;
+    let map = JSON.parse(JSON.stringify(this.tableau));
+
+    map = this.format_map(map);
+
+    // console.log(map);
     
 
-    // this.iaTurn = false;
-    // this.player1Turn = true;
-    // this.limitTimerPlayer1 = Date.now() + this.global.timer;
+    if (this.player1Begin) {
+      currentColor = 2;
+    }
+    else {
+      currentColor = 1;
+    }
+
+    invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor})
+    .then((response) => this.iaMove = response)
+    
   }
 
 }
