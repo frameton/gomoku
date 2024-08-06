@@ -105,6 +105,7 @@
                 &:hover, &:focus {
                     color: $blue4;
                     font-weight: bolder;
+                    cursor: pointer;
                 }
                 &::after {
                     content: '';
@@ -164,6 +165,7 @@
                 &:hover, &:focus {
                     color: $blue4;
                     font-weight: bolder;
+                    cursor: pointer;
                 }
                 &::after {
                     content: '';

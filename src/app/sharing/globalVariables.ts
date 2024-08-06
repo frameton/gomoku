@@ -10,4 +10,5 @@ export class VariablesGlobales {
   pawnsNumber: number = 361;
   doubleThreesRules: boolean = true;
   capturesRules: boolean = true;
+  intervalId: any;
 }

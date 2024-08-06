@@ -11,13 +11,13 @@
                 <a [routerLink]="'/home'" routerLinkActive="active" >Home</a>
             </div> -->
             <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
-                <a [routerLink]="'/game'" routerLinkActive="active" >Jouer</a>
+                <a (click)="redirect('/game')" routerLinkActive="active" >Jouer</a>
             </div>
             <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
-                <a [routerLink]="'/rules'" routerLinkActive="active" >Règles du jeu</a>
+                <a (click)="redirect('/rules')" routerLinkActive="active" >Règles du jeu</a>
             </div>
             <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
-                <a [routerLink]="'/settings'" routerLinkActive="active" >Paramètres</a>
+                <a (click)="redirect('/settings')" routerLinkActive="active" >Paramètres</a>
             </div>
         </div>
 

@@ -55,6 +55,10 @@ export class GameComponent {
 
   ngOnInit(): void {
     let count = 0;
+
+    if (this.global.welcomePage) {
+      this.router.navigate(['/']);
+    }
     
     while (count < 19) {
       this.tableau.push(Array(19).fill(0));
@@ -65,12 +69,11 @@ export class GameComponent {
 
     this.line = [...Array(19).keys()];
     this.case = [...Array(19).keys()];
-    if (this.global.welcomePage) {
-      this.router.navigate(['/']);
-    }
 
-    setInterval(() => {
-      this.loopTimer(); 
+    this.global.intervalId = setInterval(() => {
+      if (!this.firstTurn) {
+        this.loopTimer();
+      }
     }, 10);
   }
 
@@ -162,8 +165,10 @@ export class GameComponent {
   }
 
   public randomPlayerBegin(index: number) {
+    // console.log("enter random", index);
     
     let randomBegin = Math.floor(Math.random() * 2);
+    
     if (randomBegin == 0) {
       
       this.player1Begin = true;
@@ -181,6 +186,9 @@ export class GameComponent {
         this.player2Turn = true;
       }
     }
+
+    // console.log("exit random");
+    
   }
 
   public loopTimer() {
@@ -247,7 +255,7 @@ export class GameComponent {
       this.twoPlayersMode = true;
       this.startGameDiv.nativeElement.classList.add("fastFadeout");
       this.gameStarted = true;
-      setTimeout(() => this.randomPlayerBegin(2), 2000);
+      setTimeout(() => this.randomPlayerBegin(2), 1000);
     }
   }
 
@@ -277,6 +285,11 @@ export class GameComponent {
     setTimeout(() => this.player2Div.nativeElement.classList.add("fastFadein"), 500);
   }
 
+  public stopInterval() {
+    clearInterval(this.global.intervalId);
+    this.global.intervalId = null;
+  }
+
   public resetGame() {
     let count = 0;
     this.tableau = [];
@@ -285,6 +298,7 @@ export class GameComponent {
       this.tableau.push(Array(19).fill(0));
       count += 1;
     }
+    this.stopInterval();
     this.gameStarted = false;
     this.player1Turn = false;
     this.player1Pawns = this.global.pawnsNumber;;

@@ -42,9 +42,20 @@ export class NavBarComponent implements OnInit {
     }
   }
 
+  public redirect(path: string) {
+    this.stopInterval();
+    this.router.navigate([path])
+  }
+
   public onClickLogout() {
-    this.navBar.nativeElement.classList.add("fastFadeout");
-    setTimeout(() =>  this.router.navigate(['/welcome']), 600);
+    this.stopInterval();
+    this.global.welcomePage = true;
+    this.router.navigate(['/welcome']);
+  }
+
+  public stopInterval() {
+    clearInterval(this.global.intervalId);
+    this.global.intervalId = null;
   }
 
   public setNewUsername() {
