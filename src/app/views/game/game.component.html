@@ -62,8 +62,8 @@
             <mat-icon>person</mat-icon>
             <h2>{{ global.username }}</h2>
         </div>
-        <div [ngClass]="player1Turn ? 'timerDivActive' : 'timerDiv'">
-            {{ timerPlayer1 |date:'ss.SSS' }}
+        <div [ngClass]="[player1Turn ? (warningTimerPlayer1 ? 'warningTimerDivActive' : 'timerDivActive') : (warningTimerPlayer1 ? 'warningTimerDiv' : 'timerDiv')]">
+            {{ timerPlayer1 | date:'mm.ss.SSS' }}
         </div>
         <div class="usernamePawnsDiv">
             <div class="pawnsLogo" [ngClass]="[player1Begin == true ? 'blackPawns' : '',
@@ -121,7 +121,7 @@
                 </div>
             </div>
             <div [ngClass]="iaTurn ? 'timerDivActive' : 'timerDiv'">
-                {{ timerIa |date:'ss.SSS' }}
+                {{ timerIa |date:'mm.ss.SSS' }}
             </div>
             <div class="usernamePawnsDiv">
                 <div class="pawnsLogo" [ngClass]="[player1Begin == true ? 'whitePawns' : '',
@@ -142,8 +142,8 @@
                 <mat-icon>person</mat-icon>
                 <h2>Joueur2</h2>
             </div>
-            <div [ngClass]="player2Turn ? 'timerDivActive' : 'timerDiv'">
-                {{ timerPlayer2 |date:'ss.SSS' }}
+            <div [ngClass]="player2Turn ? (warningTimerPlayer2 ? 'warningTimerDivActive' : 'timerDivActive') : (warningTimerPlayer2 ? 'warningTimerDiv' : 'timerDiv')">
+                {{ timerPlayer2 |date:'mm.ss.SSS' }}
             </div>
             <div class="usernamePawnsDiv">
                 <div class="pawnsLogo" [ngClass]="[player1Begin == true ? 'whitePawns' : '',

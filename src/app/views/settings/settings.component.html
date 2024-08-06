@@ -64,6 +64,9 @@
             <div [ngClass]="global.capturesRules ? 'rulesDivActive' : 'rulesDiv'" (click)="changeCaptureRules()">
                 <h3>Captures</h3>
             </div>
+            <div [ngClass]="global.timerRules ? 'rulesDivActive' : 'rulesDiv'" (click)="changeTimerRules()">
+                <h3>Minuteur</h3>
+            </div>
             <!-- <div [ngClass]="global.pawnsNumber == 40 ? 'rulesDivActive' : 'rulesDiv'" (click)="changePawns(40)">
                 <h3>40</h3>
             </div> -->

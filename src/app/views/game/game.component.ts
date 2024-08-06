@@ -37,6 +37,8 @@ export class GameComponent {
   public tmpWinner: boolean = false;
   public limitTimerPlayer1: number | undefined = undefined;
   public limitTimerPlayer2: number | undefined = undefined;
+  public warningTimerPlayer1: boolean = false;
+  public warningTimerPlayer2: boolean = false;
   public limitTimerIa: number | undefined = undefined;
   public timerPlayer1: number | undefined = undefined;
   public timerPlayer2: number | undefined = undefined;
@@ -191,53 +193,93 @@ export class GameComponent {
     
   }
 
+  public setLimitTimer(index: number) {
+    if (index == 1) {
+      this.warningTimerPlayer1 = false;
+      if (!this.global.timerRules) {
+        this.limitTimerPlayer1 = Date.now();
+      }
+      else {
+        this.limitTimerPlayer1 = Date.now() + this.global.timer;
+      }
+    }
+    if (index == 2) {
+      this.warningTimerPlayer2 = false;
+      if (!this.global.timerRules) {
+        this.limitTimerPlayer2 = Date.now();
+      }
+      else {
+        this.limitTimerPlayer2 = Date.now() + this.global.timer;
+      }
+    }
+  }
+
   public loopTimer() {
     // console.log("loop");
     
     
     if (this.limitTimerPlayer1 || this.limitTimerPlayer2 || this.limitTimerIa) {
       if (this.player1Turn) {
-        this.timerPlayer1 = this.limitTimerPlayer1! - Date.now();
-        this.timerPlayer2 = 0;
-        // this.timerIa = 0;
-        if (!this.isPlaying && Date.now() >= this.limitTimerPlayer1!) {
-          this.player1Turn = false;
-          if (this.twoPlayersMode) {
-            this.player2Turn = true;
-            this.limitTimerPlayer2 = Date.now() + this.global.timer;
+        if (!this.global.timerRules) {
+          this.timerPlayer1 = Date.now() - this.limitTimerPlayer1!;
+        }
+        else {
+          this.timerPlayer1 = this.limitTimerPlayer1! - Date.now();
+          // this.timerPlayer2 = 0;
+          if (this.timerPlayer1 < 4000) {
+            this.warningTimerPlayer1 = true;
           }
-          else {
-            this.iaTurn = true;
-            this.limitTimerIa = Date.now() + this.timeForPlayIa;
-            this.callRustAi();
+          // this.timerIa = 0;
+          if (this.global.timerRules && !this.isPlaying && Date.now() >= this.limitTimerPlayer1!) {
+            this.player1Turn = false;
+            this.timerPlayer1 = 0;
+            if (this.twoPlayersMode) {
+              this.player2Turn = true;
+              this.setLimitTimer(2);
+            }
+            else {
+              this.iaTurn = true;
+              this.limitTimerIa = Date.now();
+              this.callRustAi();
+            }
           }
         }
       }
       else if (this.player2Turn) {
-        this.timerPlayer2 = this.limitTimerPlayer2! - Date.now();
-        this.timerPlayer1 = 0;
-        if (!this.isPlaying && Date.now() >= this.limitTimerPlayer2!) {
-          this.player2Turn = false;
-          this.player1Turn = true;
-          this.limitTimerPlayer1 = Date.now() + this.global.timer;
+        if (!this.global.timerRules) {
+          this.timerPlayer2 = Date.now() - this.limitTimerPlayer2!;
+        }
+        else {
+          this.timerPlayer2 = this.limitTimerPlayer2! - Date.now();
+          // this.timerPlayer1 = 0;
+          if (this.timerPlayer2 < 4000) {
+            this.warningTimerPlayer2 = true;
+          }
+          // thi
+          if (!this.isPlaying && Date.now() >= this.limitTimerPlayer2!) {
+            this.timerPlayer2 = 0;
+            this.player2Turn = false;
+            this.player1Turn = true;
+            this.setLimitTimer(1);
+          }
         }
       }
       else if (this.iaTurn) {
         // this.timerIa = this.limitTimerIa! - Date.now();
-        this.timerIa = (Date.now() + this.timeForPlayIa) - this.limitTimerIa!;
+        this.timerIa = Date.now() - this.limitTimerIa!;
         this.timerPlayer1 = 0;
-        if (!this.isPlaying && Date.now() >= this.limitTimerIa!) {
-          this.iaTurn = false;
-          this.player1Turn = true;
-          this.limitTimerPlayer1 = Date.now() + this.global.timer;
-        }
+        // if (!this.isPlaying && Date.now() >= this.limitTimerIa!) {
+        //   this.iaTurn = false;
+        //   this.player1Turn = true;
+        //   this.limitTimerPlayer1 = Date.now() + this.global.timer;
+        // }
 
         if (this.iaMove) {
           console.log(this.iaMove);
           
           this.iaTurn = false;
           this.player1Turn = true;
-          this.limitTimerPlayer1 = Date.now() + this.global.timer;
+          this.setLimitTimer(1);
           this.iaMove = null;
         }
       }
@@ -319,6 +361,8 @@ export class GameComponent {
     this.limitTimerIa = undefined;
     this.timerPlayer1 = undefined;
     this.timerPlayer2 = undefined;
+    this.warningTimerPlayer1 = false;
+    this.warningTimerPlayer2 = false;
     this.timerIa = undefined;
     this.tmpWinner = false;
   }
@@ -973,12 +1017,12 @@ export class GameComponent {
         if (this.twoPlayersMode) {
           this.player1Turn = false;
           this.player2Turn = true;
-          this.limitTimerPlayer2 = Date.now() + this.global.timer;
+          this.setLimitTimer(2);
         }
         else {
           this.player1Turn = false;
           this.iaTurn = true;
-          this.limitTimerIa = Date.now() + this.timeForPlayIa;
+          this.limitTimerIa = Date.now();
           this.callRustAi();
         }
       }
@@ -1005,12 +1049,12 @@ export class GameComponent {
         if (this.twoPlayersMode) {
           this.player1Turn = false;
           this.player2Turn = true;
-          this.limitTimerPlayer2 = Date.now() + this.global.timer;
+          this.setLimitTimer(2);
         }
         else {
           this.player1Turn = false;
           this.iaTurn = true;
-          this.limitTimerIa = Date.now() + this.timeForPlayIa;
+          this.limitTimerIa = Date.now();
           this.callRustAi();
         }
       }
@@ -1036,7 +1080,7 @@ export class GameComponent {
         this.pawnsPlayed += 1;
         this.iaTurn = false;
         this.player1Turn = true;
-        this.limitTimerPlayer1 = Date.now() + this.global.timer;
+        this.setLimitTimer(1);
       }
       else if (this.iaTurn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
         if (this.iaPawns == 0) {
@@ -1060,7 +1104,7 @@ export class GameComponent {
         this.pawnsPlayed += 1;
         this.iaTurn = false;
         this.player1Turn = true;
-        this.limitTimerPlayer1 = Date.now() + this.global.timer;
+        this.setLimitTimer(1);
       }
       else if (this.player2Turn && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
         if (this.player2Pawns == 0) {
@@ -1084,7 +1128,7 @@ export class GameComponent {
         this.pawnsPlayed += 1;
         this.player2Turn = false;
         this.player1Turn = true;
-        this.limitTimerPlayer1 = Date.now() + this.global.timer;
+        this.setLimitTimer(1);
       }
       else if (this.player2Turn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
         if (this.player2Pawns == 0) {
@@ -1108,7 +1152,7 @@ export class GameComponent {
         this.pawnsPlayed += 1;
         this.player2Turn = false;
         this.player1Turn = true;
-        this.limitTimerPlayer1 = Date.now() + this.global.timer;
+        this.setLimitTimer(1);
       }
       if (this.pawnsPlayed == 361 || (this.player1Pawns == 0 && ((this.twoPlayersMode && this.player2Pawns == 0) || (!this.twoPlayersMode && this.player2Pawns == 0)))) {
         this.endGame(0)
@@ -1143,6 +1187,8 @@ export class GameComponent {
 
 
   public callRustAi() {
+    // console.log("call rust ai");
+    
     let currentColor;
     let map = JSON.parse(JSON.stringify(this.tableau));
 

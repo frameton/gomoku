@@ -7,11 +7,18 @@
     left: 0px;
     width: 100%;
     min-height: 100%;
-    background-image: url("../assets/gomoku_background2.jpg");
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    background-size: 100% auto;
+    // background-image: url("../assets/gomoku_background2.jpg");
+    // background-position: center;
+    // background-attachment: fixed;
+    // background-repeat: no-repeat;
+    // background-size: 100% auto;
+
+    background: url("../assets/gomoku_background2.jpg") no-repeat center center fixed; 
+
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     overflow-x: hidden;
     overflow-y: hidden;
     z-index: 0;

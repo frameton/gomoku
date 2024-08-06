@@ -31,4 +31,8 @@ export class SettingsComponent {
   public changeCaptureRules() {
     this.global.capturesRules = !this.global.capturesRules;
   }
+
+  public changeTimerRules() {
+    this.global.timerRules = !this.global.timerRules;
+  }
 }
