@@ -15,14 +15,14 @@ export class AppComponent {
   title = 'gomoku';
 
   ngOnInit(): void {
-    if (window.innerWidth < 700) {
+    if (window.innerWidth < 1200) {
       this.validWidth = false;
     }
     else {
       this.validWidth = true;
     }
 
-    if (window.innerHeight < 400) {
+    if (window.innerHeight < 700) {
       this.validHeight = false;
     }
     else {
@@ -31,16 +31,16 @@ export class AppComponent {
   }
 
   public onResize(event: any) {
-    console.log(window.innerHeight);
+    console.log(window.innerWidth, window.innerHeight);
     
-    if (window.innerWidth < 700) {
+    if (window.innerWidth < 1200) {
       this.validWidth = false;
     }
     else {
       this.validWidth = true;
     }
 
-    if (window.innerHeight < 400) {
+    if (window.innerHeight < 700) {
       this.validHeight = false;
     }
     else {
