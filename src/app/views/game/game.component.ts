@@ -884,7 +884,7 @@ export class GameComponent {
     return false;
   }
 
-  public checkNeighborsCases(line: Array<number>, caseIndex: number, caseTypeSearch: number) {
+  public checkNeighborsCases(line: Array<number>, caseIndex: number) {
     if (line[caseIndex] > 0) {
       return true;
     }
@@ -1084,7 +1084,7 @@ export class GameComponent {
     return false
   }
 
-  public checkValidPush(lineIndex: number, caseIndex: number, caseTypeSearch: number) {
+  public checkValidPush(lineIndex: number, caseIndex: number) {
 
     let lines = [];
 
@@ -1114,7 +1114,7 @@ export class GameComponent {
       lines.push(this.tableau[lineIndex + 1]);
     }
     for (let line of lines) {
-      if (this.checkNeighborsCases(line, caseIndex, caseTypeSearch)) {
+      if (this.checkNeighborsCases(line, caseIndex)) {
         return true;
       }
     }
@@ -1127,37 +1127,18 @@ export class GameComponent {
   public pushCase(lineIndex: number, caseIndex: number) {
     this.isPlaying = true;
     if (this.tableau[lineIndex][caseIndex] > -3 && this.tableau[lineIndex][caseIndex] < 1) {
-      if (this.player1Turn && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+      if (this.player1Turn && this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.player1Pawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "player1";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player1";
-          // if (this.twoPlayersMode) {
-          //   if (this.global.capturesRules) {
-          //     this.winner = "player2";
-          //   }
-          //   else {
-          //     this.winner = "player1";
-          //   }
-          // }
-          // else {
-          //   if (this.global.capturesRules) {
-          //     this.winner = "ia";
-          //   }
-          //   else {
-          //     this.winner = "player1";
-          //   }
-          // }
           setTimeout(() => this.endGame(1), 1500);
           return;
         }
@@ -1175,37 +1156,18 @@ export class GameComponent {
           this.callRustAi();
         }
       }
-      else if (this.player1Turn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+      else if (this.player1Turn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.player1Pawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 2;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "player1";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player1";
-          // if (this.twoPlayersMode) {
-          //   if (this.global.capturesRules) {
-          //     this.winner = "player2";
-          //   }
-          //   else {
-          //     this.winner = "player1";
-          //   }
-          // }
-          // else {
-          //   if (this.global.capturesRules) {
-          //     this.winner = "ia";
-          //   }
-          //   else {
-          //     this.winner = "player1";
-          //   }
-          // }
           setTimeout(() => this.endGame(1), 1500);
           return;
         }
@@ -1223,27 +1185,18 @@ export class GameComponent {
           this.callRustAi();
         }
       }
-      else if (this.iaTurn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+      else if (this.iaTurn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 2;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "ia";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia";
-          // if (this.global.capturesRules) {
-          //   this.winner = "player1";
-          // }
-          // else {
-          //   this.winner = "ia";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1253,27 +1206,18 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      else if (this.iaTurn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+      else if (this.iaTurn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "ia";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia";
-          // if (this.global.capturesRules) {
-          //   this.winner = "player1";
-          // }
-          // else {
-          //   this.winner = "ia";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1283,27 +1227,18 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      else if (this.iaTurn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+      else if (this.iaTurn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "ia";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia";
-          // if (this.global.capturesRules) {
-          //   this.winner = "ia2";
-          // }
-          // else {
-          //   this.winner = "ia";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1314,27 +1249,18 @@ export class GameComponent {
         this.limitTimerIa2 = Date.now();
         this.callRustAi();
       }
-      else if (this.iaTurn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+      else if (this.iaTurn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 2;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "ia";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia";
-          // if (this.global.capturesRules) {
-          //   this.winner = "ia2";
-          // }
-          // else {
-          //   this.winner = "ia";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1345,27 +1271,18 @@ export class GameComponent {
         this.limitTimerIa2 = Date.now();
         this.callRustAi();
       }
-      else if (this.ia2Turn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+      else if (this.ia2Turn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 2;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "ia";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia2";
-          // if (this.global.capturesRules) {
-          //   this.winner = "ia";
-          // }
-          // else {
-          //   this.winner = "ia2";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1376,27 +1293,18 @@ export class GameComponent {
         this.limitTimerIa = Date.now();
         this.callRustAi();
       }
-      else if (this.ia2Turn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+      else if (this.ia2Turn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "ia";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia2";
-          // if (this.global.capturesRules) {
-          //   this.winner = "ia";
-          // }
-          // else {
-          //   this.winner = "ia2";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1407,27 +1315,18 @@ export class GameComponent {
         this.limitTimerIa = Date.now();
         this.callRustAi();
       }
-      else if (this.player2Turn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+      else if (this.player2Turn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.player2Pawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 2;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "player2";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player2";
-          // if (this.global.capturesRules) {
-          //   this.winner = "player1";
-          // }
-          // else {
-          //   this.winner = "player2";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1437,27 +1336,18 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      else if (this.player2Turn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+      else if (this.player2Turn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.player2Pawns == 0) {
           this.endGame(0)
           return;
         }
         this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          // this.setAllTurnFalse();
-          // this.winner = "player2";
-          // setTimeout(() => this.endGame(1), 1500);
           return;
         }
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player2";
-          // if (this.global.capturesRules) {
-          //   this.winner = "player1";
-          // }
-          // else {
-          //   this.winner = "player2";
-          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
