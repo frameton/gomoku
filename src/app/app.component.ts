@@ -15,7 +15,7 @@ export class AppComponent {
   title = 'gomoku';
 
   ngOnInit(): void {
-    if (window.innerWidth < 1200) {
+    if (window.innerWidth < 1100) {
       this.validWidth = false;
     }
     else {
@@ -33,7 +33,7 @@ export class AppComponent {
   public onResize(event: any) {
     console.log(window.innerWidth, window.innerHeight);
     
-    if (window.innerWidth < 1200) {
+    if (window.innerWidth < 1100) {
       this.validWidth = false;
     }
     else {

@@ -25,7 +25,7 @@
         position: absolute;
         display: flex;
         flex-direction: column;
-        width: 400px;
+        width: 500px;
         height: 100px;
         background-color: $black;
         top: 50%;
@@ -53,7 +53,7 @@
             justify-content: space-around;
             align-items: center;
             height: 70px;
-            width: 90%;
+            width: 95%;
             margin: auto;
 
             .playBtn {
@@ -208,7 +208,7 @@
         }
     }
 
-    .secondPlayerBlock {
+    .firstPlayerBlock, .secondPlayerBlock {
         position: relative;
         display: flex;
         height: 40vh;
@@ -220,7 +220,7 @@
         animation: lightFloatNoShadow 2s ease-in-out infinite !important;
     }
 
-    .player1Div, .player2Div, .iaDiv {
+    .player1Div, .player2Div, .iaDiv, .ia2Div {
         position: relative;
         display: flex;
         flex-direction: column;

@@ -9,6 +9,7 @@ import { invoke } from '@tauri-apps/api'
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent {
+  @ViewChild("player1Div") player1Div!: ElementRef;
   @ViewChild("player2Div") player2Div!: ElementRef;
   @ViewChild("startGameDiv") startGameDiv!: ElementRef;
   @ViewChild("endGameDiv") endGameDiv!: ElementRef;
@@ -27,8 +28,13 @@ export class GameComponent {
   public iaTurn: boolean = false;
   public iaPawns!: number;
   public iaCapture: number = 0;
+  public ia2Turn: boolean = false;
+  public ia2Pawns!: number;
+  public ia2Capture: number = 0;
   public twoPlayersMode: boolean = false;
+  public twoIaMode: boolean = false;
   public player1Begin: boolean | null = null;
+  public iaBegin: boolean | null = null;
   public firstTurn: boolean = true;
   public tableau: Array<number>[] = [];
   public tmpWinnerTab: any = [];
@@ -40,19 +46,25 @@ export class GameComponent {
   public warningTimerPlayer1: boolean = false;
   public warningTimerPlayer2: boolean = false;
   public limitTimerIa: number | undefined = undefined;
+  public limitTimerIa2: number | undefined = undefined;
   public timerPlayer1: number | undefined = undefined;
   public timerPlayer2: number | undefined = undefined;
   public timerIa: number | undefined = undefined;
-  public timeForPlayIa: number = 10000
+  public timerIa2: number | undefined = undefined;
   public diagonale1: any;
   public diagonale2: any;
+  public currentPlayer: string = "";
+  public currentColor: number = 0;
+  public currentOpponent: string = "";
   private isPlaying: boolean = false;
   private iaMove: any = null;
+  private ia2Move: any = null;
 
   constructor(public global: VariablesGlobales, private router: Router ) {
    this.player1Pawns = this.global.pawnsNumber;
    this.player2Pawns = this.global.pawnsNumber;
    this.iaPawns = this.global.pawnsNumber;
+   this.ia2Pawns = this.global.pawnsNumber;
   }
 
   ngOnInit(): void {
@@ -71,12 +83,6 @@ export class GameComponent {
 
     this.line = [...Array(19).keys()];
     this.case = [...Array(19).keys()];
-
-    this.global.intervalId = setInterval(() => {
-      if (!this.firstTurn) {
-        this.loopTimer();
-      }
-    }, 10);
   }
 
   public createDiagonalArray() {
@@ -170,25 +176,35 @@ export class GameComponent {
     // console.log("enter random", index);
     
     let randomBegin = Math.floor(Math.random() * 2);
-    
-    if (randomBegin == 0) {
-      
-      this.player1Begin = true;
-      this.player1Turn = true;
-    }
-    else {
-      this.player1Begin = false;
-      if (index == 1) {
-        
-        this.iaTurn = true;
-        this.pushCase(9, 9);
-        // this.callRustAi();
+    if (index < 3) {
+      if (randomBegin == 0) {
+        this.player1Begin = true;
+        this.player1Turn = true;
       }
       else {
-        this.player2Turn = true;
+        this.player1Begin = false;
+        if (index == 1) {
+          
+          this.iaTurn = true;
+          this.pushCase(9, 9);
+          // this.callRustAi();
+        }
+        else {
+          this.player2Turn = true;
+        }
       }
     }
-
+    else {
+      if (randomBegin == 0) {
+        this.iaBegin = true;
+        this.iaTurn = true;
+      }
+      else {
+        this.iaBegin = false;
+        this.ia2Turn = true;
+      }
+      this.pushCase(9, 9);
+    }
     // console.log("exit random");
     
   }
@@ -215,10 +231,8 @@ export class GameComponent {
   }
 
   public loopTimer() {
-    // console.log("loop");
+    console.log("loop");
     
-    
-    if (this.limitTimerPlayer1 || this.limitTimerPlayer2 || this.limitTimerIa) {
       if (this.player1Turn) {
         if (!this.global.timerRules) {
           this.timerPlayer1 = Date.now() - this.limitTimerPlayer1!;
@@ -267,7 +281,7 @@ export class GameComponent {
       else if (this.iaTurn) {
         // this.timerIa = this.limitTimerIa! - Date.now();
         this.timerIa = Date.now() - this.limitTimerIa!;
-        this.timerPlayer1 = 0;
+        // this.timerPlayer1 = 0;
         // if (!this.isPlaying && Date.now() >= this.limitTimerIa!) {
         //   this.iaTurn = false;
         //   this.player1Turn = true;
@@ -276,17 +290,49 @@ export class GameComponent {
 
         if (this.iaMove) {
           console.log(this.iaMove);
-          
+
           this.iaTurn = false;
-          this.player1Turn = true;
-          this.setLimitTimer(1);
-          this.iaMove = null;
+
+          if (this.twoIaMode) {
+            this.ia2Turn = true;
+            this.limitTimerIa2 = Date.now();
+            this.iaMove = null;
+            this.callRustAi();
+          }
+          else {
+            this.player1Turn = true;
+            this.setLimitTimer(1);
+            this.iaMove = null;
+          }
+          
         }
       }
-    }
+      else if (this.ia2Turn) {
+        // this.timerIa = this.limitTimerIa! - Date.now();
+        this.timerIa2 = Date.now() - this.limitTimerIa2!;
+        // this.timerIa = 0;
+        // if (!this.isPlaying && Date.now() >= this.limitTimerIa!) {
+        //   this.iaTurn = false;
+        //   this.player1Turn = true;
+        //   this.limitTimerPlayer1 = Date.now() + this.global.timer;
+        // }
+
+        if (this.ia2Move) {
+          console.log(this.ia2Move);
+
+          this.ia2Turn = false;
+
+          this.iaTurn = true;
+          this.limitTimerIa = Date.now();
+          this.ia2Move = null;
+          this.callRustAi();
+          
+        }
+      }
   }
 
   public startGame(index: number) {
+    this.startInterval();
     if (index == 1) {
       this.startGameDiv.nativeElement.classList.add("fastFadeout");
       this.player2Div.nativeElement.classList.add("fastFadeout");
@@ -299,12 +345,21 @@ export class GameComponent {
       this.gameStarted = true;
       setTimeout(() => this.randomPlayerBegin(2), 1000);
     }
+    if (index == 3) {
+      this.twoIaMode = true;
+      this.startGameDiv.nativeElement.classList.add("fastFadeout");
+      this.player2Div.nativeElement.classList.add("fastFadeout");
+      this.player1Div.nativeElement.classList.add("fastFadeout");
+      this.gameStarted = true;
+      setTimeout(() => this.randomPlayerBegin(3), 1000);
+    }
   }
 
   public setAllTurnFalse() {
     this.player2Turn = false;
     this.player1Turn = false;
     this.iaTurn = false;
+    this.ia2Turn = false;
   }
 
   public endGame(index: number) {
@@ -325,11 +380,21 @@ export class GameComponent {
     setTimeout(() => this.resetGame(), 300);
     setTimeout(() => this.player2Div.nativeElement.classList.remove("fastFadeout"), 500);
     setTimeout(() => this.player2Div.nativeElement.classList.add("fastFadein"), 500);
+    setTimeout(() => this.player1Div.nativeElement.classList.remove("fastFadeout"), 500);
+    setTimeout(() => this.player1Div.nativeElement.classList.add("fastFadein"), 500);
   }
 
   public stopInterval() {
     clearInterval(this.global.intervalId);
     this.global.intervalId = null;
+  }
+
+  public startInterval() {
+    this.global.intervalId = setInterval(() => {
+      if (!this.firstTurn && (this.limitTimerPlayer1 || this.limitTimerPlayer2 || this.limitTimerIa || this.limitTimerIa2)) {
+        this.loopTimer();
+      }
+    }, 10);
   }
 
   public resetGame() {
@@ -343,27 +408,34 @@ export class GameComponent {
     this.stopInterval();
     this.gameStarted = false;
     this.player1Turn = false;
-    this.player1Pawns = this.global.pawnsNumber;;
+    this.player1Pawns = this.global.pawnsNumber;
     this.player1Capture = 0;
     this.player2Turn = false;
-    this.player2Pawns = this.global.pawnsNumber;;
+    this.player2Pawns = this.global.pawnsNumber;
     this.player2Capture = 0;
     this.iaTurn = false;
-    this.iaPawns = this.global.pawnsNumber;;
+    this.iaPawns = this.global.pawnsNumber;
     this.iaCapture = 0;
+    this.ia2Turn = false;
+    this.ia2Pawns = this.global.pawnsNumber;
+    this.ia2Capture = 0;
     this.twoPlayersMode = false;
+    this.twoIaMode = false;
     this.player1Begin = null;
+    this.iaBegin = null;
     this.winner = "";
     this.winType = "";
     this.firstTurn = true;
     this.limitTimerPlayer1 = undefined;
     this.limitTimerPlayer2 = undefined;
     this.limitTimerIa = undefined;
+    this.limitTimerIa2 = undefined;
     this.timerPlayer1 = undefined;
     this.timerPlayer2 = undefined;
     this.warningTimerPlayer1 = false;
     this.warningTimerPlayer2 = false;
     this.timerIa = undefined;
+    this.timerIa2 = undefined;
     this.tmpWinner = false;
   }
 
@@ -516,13 +588,38 @@ export class GameComponent {
               return false;
             }
           }
+          if (this.ia2Turn) {
+            if (this.ia2Capture >= 5) {
+              this.winType = "breakWinCapture";
+              this.setAllTurnFalse();
+              this.winner = "ia2";
+              setTimeout(() => this.endGame(1), 1500);
+              return false;
+            }
+          }
 
         }
         else {
+          let focus = (this.tableau[elt[0][0]][elt[0][1]] - 2);
           for (let elt2 of elt) {
             this.tableau[elt2[0]][elt2[1]] += 2;
           }
-          return true;
+
+          this.statutCurrentPlayer();
+
+          if (focus == this.currentColor) {
+            this.winType = "align";
+            this.setAllTurnFalse();
+            this.winner = this.currentPlayer;
+            setTimeout(() => this.endGame(1), 1500);
+          }
+          else {
+            this.winType = "align";
+            this.setAllTurnFalse();
+            this.winner = this.currentOpponent;
+            setTimeout(() => this.endGame(1), 1500);
+          }
+          return false;
         }
       }
 
@@ -622,13 +719,25 @@ export class GameComponent {
     let lineDiag2 = this.diagonale2[lineIndex + (18 - caseIndex)];
     let winner = false;
 
-    if ((this.player1Turn && this.player1Begin) || (!this.player1Turn && !this.player1Begin)) {
-      currentPlayer = 1;
-      currentOpponent = 2;
+    if (!this.twoIaMode) {
+      if ((this.player1Turn && this.player1Begin) || (!this.player1Turn && !this.player1Begin)) {
+        currentPlayer = 1;
+        currentOpponent = 2;
+      }
+      if ((this.player1Turn && !this.player1Begin) || (!this.player1Turn && this.player1Begin)) {
+        currentPlayer = 2;
+        currentOpponent = 1;
+      }
     }
-    if ((this.player1Turn && !this.player1Begin) || (!this.player1Turn && this.player1Begin)) {
-      currentPlayer = 2;
-      currentOpponent = 1;
+    else {
+      if ((this.iaTurn && this.iaBegin) || (!this.iaTurn && !this.iaBegin)) {
+        currentPlayer = 1;
+        currentOpponent = 2;
+      }
+      if ((this.iaTurn && !this.iaBegin) || (!this.iaTurn && this.iaBegin)) {
+        currentPlayer = 2;
+        currentOpponent = 1;
+      }
     }
 
     while (caseElt < 16) {
@@ -731,6 +840,7 @@ export class GameComponent {
   }
 
   public incrementeCapture() {
+    this.pawnsPlayed -= 2;
     if (this.player1Turn) {
       this.player1Capture++;
       if (this.player1Capture == 5) {
@@ -741,7 +851,7 @@ export class GameComponent {
         return true;
       }
     }
-    if (this.player2Turn) {
+    else if (this.player2Turn) {
       this.player2Capture++;
       if (this.player2Capture == 5) {
         this.winType = "capture";
@@ -751,12 +861,22 @@ export class GameComponent {
         return true;
       }
     }
-    if (this.iaTurn) {
+    else if (this.iaTurn) {
       this.iaCapture++;
       if (this.iaCapture == 5) {
         this.winType = "capture";
         this.setAllTurnFalse();
         this.winner = "ia";
+        setTimeout(() => this.endGame(1), 1500);
+        return true;
+      }
+    }
+    else if (this.ia2Turn) {
+      this.ia2Capture++;
+      if (this.ia2Capture == 5) {
+        this.winType = "capture";
+        this.setAllTurnFalse();
+        this.winner = "ia2";
         setTimeout(() => this.endGame(1), 1500);
         return true;
       }
@@ -788,13 +908,26 @@ export class GameComponent {
     let lineDiag1 = this.diagonale1[lineIndex + caseIndex];
     let lineDiag2 = this.diagonale2[lineIndex + (18 - caseIndex)];
 
-    if ((this.player1Turn && this.player1Begin) || (!this.player1Turn && !this.player1Begin)) {
-      currentPlayer = 1;
-      currentOpponent = 2;
+
+    if (!this.twoIaMode) {
+      if ((this.player1Turn && this.player1Begin) || (!this.player1Turn && !this.player1Begin)) {
+        currentPlayer = 1;
+        currentOpponent = 2;
+      }
+      if ((this.player1Turn && !this.player1Begin) || (!this.player1Turn && this.player1Begin)) {
+        currentPlayer = 2;
+        currentOpponent = 1;
+      }
     }
-    if ((this.player1Turn && !this.player1Begin) || (!this.player1Turn && this.player1Begin)) {
-      currentPlayer = 2;
-      currentOpponent = 1;
+    else {
+      if ((this.iaTurn && this.iaBegin) || (!this.iaTurn && !this.iaBegin)) {
+        currentPlayer = 1;
+        currentOpponent = 2;
+      }
+      if ((this.iaTurn && !this.iaBegin) || (!this.iaTurn && this.iaBegin)) {
+        currentPlayer = 2;
+        currentOpponent = 1;
+      }
     }
 
     
@@ -1009,6 +1142,22 @@ export class GameComponent {
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player1";
+          // if (this.twoPlayersMode) {
+          //   if (this.global.capturesRules) {
+          //     this.winner = "player2";
+          //   }
+          //   else {
+          //     this.winner = "player1";
+          //   }
+          // }
+          // else {
+          //   if (this.global.capturesRules) {
+          //     this.winner = "ia";
+          //   }
+          //   else {
+          //     this.winner = "player1";
+          //   }
+          // }
           setTimeout(() => this.endGame(1), 1500);
           return;
         }
@@ -1041,6 +1190,22 @@ export class GameComponent {
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player1";
+          // if (this.twoPlayersMode) {
+          //   if (this.global.capturesRules) {
+          //     this.winner = "player2";
+          //   }
+          //   else {
+          //     this.winner = "player1";
+          //   }
+          // }
+          // else {
+          //   if (this.global.capturesRules) {
+          //     this.winner = "ia";
+          //   }
+          //   else {
+          //     this.winner = "player1";
+          //   }
+          // }
           setTimeout(() => this.endGame(1), 1500);
           return;
         }
@@ -1058,7 +1223,7 @@ export class GameComponent {
           this.callRustAi();
         }
       }
-      else if (this.iaTurn && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+      else if (this.iaTurn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
@@ -1073,6 +1238,12 @@ export class GameComponent {
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia";
+          // if (this.global.capturesRules) {
+          //   this.winner = "player1";
+          // }
+          // else {
+          //   this.winner = "ia";
+          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1082,7 +1253,7 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      else if (this.iaTurn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+      else if (this.iaTurn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
@@ -1097,6 +1268,12 @@ export class GameComponent {
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "ia";
+          // if (this.global.capturesRules) {
+          //   this.winner = "player1";
+          // }
+          // else {
+          //   this.winner = "ia";
+          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1106,7 +1283,131 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      else if (this.player2Turn && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+      else if (this.iaTurn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+        if (this.iaPawns == 0) {
+          this.endGame(0)
+          return;
+        }
+        this.tableau[lineIndex][caseIndex] = 1;
+        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
+          // this.setAllTurnFalse();
+          // this.winner = "ia";
+          // setTimeout(() => this.endGame(1), 1500);
+          return;
+        }
+        if (this.checkWinner(lineIndex, caseIndex)) {
+          this.setAllTurnFalse();
+          this.winner = "ia";
+          // if (this.global.capturesRules) {
+          //   this.winner = "ia2";
+          // }
+          // else {
+          //   this.winner = "ia";
+          // }
+          setTimeout(() => this.endGame(2), 1500);
+          return;
+        }
+        this.iaPawns -= 1;
+        this.pawnsPlayed += 1;
+        this.iaTurn = false;
+        this.ia2Turn = true;
+        this.limitTimerIa2 = Date.now();
+        this.callRustAi();
+      }
+      else if (this.iaTurn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+        if (this.iaPawns == 0) {
+          this.endGame(0)
+          return;
+        }
+        this.tableau[lineIndex][caseIndex] = 2;
+        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
+          // this.setAllTurnFalse();
+          // this.winner = "ia";
+          // setTimeout(() => this.endGame(1), 1500);
+          return;
+        }
+        if (this.checkWinner(lineIndex, caseIndex)) {
+          this.setAllTurnFalse();
+          this.winner = "ia";
+          // if (this.global.capturesRules) {
+          //   this.winner = "ia2";
+          // }
+          // else {
+          //   this.winner = "ia";
+          // }
+          setTimeout(() => this.endGame(2), 1500);
+          return;
+        }
+        this.iaPawns -= 1;
+        this.pawnsPlayed += 1;
+        this.iaTurn = false;
+        this.ia2Turn = true;
+        this.limitTimerIa2 = Date.now();
+        this.callRustAi();
+      }
+      else if (this.ia2Turn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 1)) {
+        if (this.iaPawns == 0) {
+          this.endGame(0)
+          return;
+        }
+        this.tableau[lineIndex][caseIndex] = 2;
+        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
+          // this.setAllTurnFalse();
+          // this.winner = "ia";
+          // setTimeout(() => this.endGame(1), 1500);
+          return;
+        }
+        if (this.checkWinner(lineIndex, caseIndex)) {
+          this.setAllTurnFalse();
+          this.winner = "ia2";
+          // if (this.global.capturesRules) {
+          //   this.winner = "ia";
+          // }
+          // else {
+          //   this.winner = "ia2";
+          // }
+          setTimeout(() => this.endGame(2), 1500);
+          return;
+        }
+        this.ia2Pawns -= 1;
+        this.pawnsPlayed += 1;
+        this.ia2Turn = false;
+        this.iaTurn = true;
+        this.limitTimerIa = Date.now();
+        this.callRustAi();
+      }
+      else if (this.ia2Turn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+        if (this.iaPawns == 0) {
+          this.endGame(0)
+          return;
+        }
+        this.tableau[lineIndex][caseIndex] = 1;
+        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
+          // this.setAllTurnFalse();
+          // this.winner = "ia";
+          // setTimeout(() => this.endGame(1), 1500);
+          return;
+        }
+        if (this.checkWinner(lineIndex, caseIndex)) {
+          this.setAllTurnFalse();
+          this.winner = "ia2";
+          // if (this.global.capturesRules) {
+          //   this.winner = "ia";
+          // }
+          // else {
+          //   this.winner = "ia2";
+          // }
+          setTimeout(() => this.endGame(2), 1500);
+          return;
+        }
+        this.ia2Pawns -= 1;
+        this.pawnsPlayed += 1;
+        this.ia2Turn = false;
+        this.iaTurn = true;
+        this.limitTimerIa = Date.now();
+        this.callRustAi();
+      }
+      else if (this.player2Turn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 1)) {
         if (this.player2Pawns == 0) {
           this.endGame(0)
           return;
@@ -1121,6 +1422,12 @@ export class GameComponent {
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player2";
+          // if (this.global.capturesRules) {
+          //   this.winner = "player1";
+          // }
+          // else {
+          //   this.winner = "player2";
+          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1130,7 +1437,7 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      else if (this.player2Turn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
+      else if (this.player2Turn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex, 2)) {
         if (this.player2Pawns == 0) {
           this.endGame(0)
           return;
@@ -1145,6 +1452,12 @@ export class GameComponent {
         if (this.checkWinner(lineIndex, caseIndex)) {
           this.setAllTurnFalse();
           this.winner = "player2";
+          // if (this.global.capturesRules) {
+          //   this.winner = "player1";
+          // }
+          // else {
+          //   this.winner = "player2";
+          // }
           setTimeout(() => this.endGame(2), 1500);
           return;
         }
@@ -1154,7 +1467,8 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      if (this.pawnsPlayed == 361 || (this.player1Pawns == 0 && ((this.twoPlayersMode && this.player2Pawns == 0) || (!this.twoPlayersMode && this.player2Pawns == 0)))) {
+      if (this.pawnsPlayed == 361 || (this.player1Pawns == 0 && ((this.twoPlayersMode && this.player2Pawns == 0) || (!this.twoPlayersMode && this.iaPawns == 0))) ||
+      (this.iaPawns == 0 && ((this.twoIaMode && this.ia2Pawns == 0) || (!this.twoIaMode && this.player1Pawns == 0)))) {
         this.endGame(0)
         return;
       }
@@ -1163,6 +1477,65 @@ export class GameComponent {
     // console.log(this.tableau);
     // console.log(this.diagonale1);
     // console.log(this.diagonale2);
+  }
+
+  public statutCurrentPlayer() {
+    if (this.player1Turn) {
+      this.currentPlayer = "player1";
+      if (this.twoPlayersMode) {
+        this.currentOpponent = "player2";
+      }
+      else {
+        this.currentOpponent = "ia";
+      }
+      if (this.player1Begin) {
+        this.currentColor = 1;
+      }
+      else {
+        this.currentColor = 2;
+      }
+    }
+    if (this.player2Turn) {
+      this.currentPlayer = "player2";
+      this.currentOpponent = "player1";
+      if (this.player1Begin) {
+        this.currentColor = 2;
+      }
+      else {
+        this.currentColor = 1;
+      }
+    }
+    if (this.iaTurn) {
+      this.currentPlayer = "ia";
+      if (!this.twoIaMode) {
+        this.currentOpponent = "player1";
+        if (this.player1Begin) {
+          this.currentColor = 2;
+        }
+        else {
+          this.currentColor = 1;
+        }
+      }
+      else {
+        this.currentOpponent = "ia2";
+        if (this.iaBegin) {
+          this.currentColor = 1;
+        }
+        else {
+          this.currentColor = 2;
+        }
+      }
+    }
+    if (this.ia2Turn) {
+      this.currentPlayer = "ia2";
+      this.currentOpponent = "ia";
+      if (this.iaBegin) {
+        this.currentColor = 2;
+      }
+      else {
+        this.currentColor = 1;
+      }
+    }
   }
 
 
@@ -1197,15 +1570,32 @@ export class GameComponent {
     // console.log(map);
     
 
-    if (this.player1Begin) {
-      currentColor = 2;
+    if (!this.twoIaMode) {
+      if (this.player1Begin) {
+        currentColor = 2;
+      }
+      else {
+        currentColor = 1;
+      }
     }
     else {
-      currentColor = 1;
+      if ((this.iaTurn && this.iaBegin) || (!this.iaTurn && !this.iaBegin)) {
+        currentColor = 1;
+      }
+      if ((this.iaTurn && !this.iaBegin) || (!this.iaTurn && this.iaBegin)) {
+        currentColor = 2;
+      }
     }
 
-    invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor})
-    .then((response) => this.iaMove = response)
+    if (this.iaTurn) {
+      invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor})
+      .then((response) => this.iaMove = response)
+    }
+
+    else if (this.ia2Turn) {
+      invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor})
+    .then((response) => this.ia2Move = response)
+    }
     
   }
 

@@ -43,7 +43,9 @@ export class NavBarComponent implements OnInit {
   }
 
   public redirect(path: string) {
-    this.stopInterval();
+    if (this.router.url != '/game') {
+      this.stopInterval();
+    }
     this.router.navigate([path])
   }
 
