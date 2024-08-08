@@ -231,7 +231,7 @@ export class GameComponent {
   }
 
   public loopTimer() {
-    console.log("loop");
+    // console.log("loop");
     
       if (this.player1Turn) {
         if (!this.global.timerRules) {
@@ -289,7 +289,7 @@ export class GameComponent {
         // }
 
         if (this.iaMove) {
-          console.log(this.iaMove);
+          // console.log(this.iaMove);
 
           this.iaTurn = false;
 
@@ -318,7 +318,7 @@ export class GameComponent {
         // }
 
         if (this.ia2Move) {
-          console.log(this.ia2Move);
+          // console.log(this.ia2Move);
 
           this.ia2Turn = false;
 
@@ -437,6 +437,7 @@ export class GameComponent {
     this.timerIa = undefined;
     this.timerIa2 = undefined;
     this.tmpWinner = false;
+    this.tmpWinnerTab = [];
   }
 
   public checkDiagonalWinner1(lineIndex: number, caseIndex: number) {
@@ -541,12 +542,12 @@ export class GameComponent {
   }
 
   public checkWinner(lineIndex: number, caseIndex: number) {
-    //return false;
     let elt = 0;
     let count = 0;
     let index = 0;
 
     if (this.global.capturesRules && this.tmpWinner) {
+      
       for (let elt of this.tmpWinnerTab) {
         let winBreak = 0;
         for (let elt2 of elt) {
@@ -1127,12 +1128,17 @@ export class GameComponent {
   public pushCase(lineIndex: number, caseIndex: number) {
     this.isPlaying = true;
     if (this.tableau[lineIndex][caseIndex] > -3 && this.tableau[lineIndex][caseIndex] < 1) {
-      if (this.player1Turn && this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
+      if (this.player1Turn && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.player1Pawns == 0) {
           this.endGame(0)
           return;
         }
-        this.tableau[lineIndex][caseIndex] = 1;
+        if (this.player1Begin) {
+          this.tableau[lineIndex][caseIndex] = 1;
+        }
+        else {
+          this.tableau[lineIndex][caseIndex] = 2;
+        }
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
           return;
         }
@@ -1156,41 +1162,17 @@ export class GameComponent {
           this.callRustAi();
         }
       }
-      else if (this.player1Turn && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
-        if (this.player1Pawns == 0) {
+      else if (this.iaTurn && !this.twoIaMode && this.checkValidPush(lineIndex, caseIndex)) {
+        if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
-        this.tableau[lineIndex][caseIndex] = 2;
-        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          return;
-        }
-        if (this.checkWinner(lineIndex, caseIndex)) {
-          this.setAllTurnFalse();
-          this.winner = "player1";
-          setTimeout(() => this.endGame(1), 1500);
-          return;
-        }
-        this.player1Pawns -= 1;
-        this.pawnsPlayed += 1;
-        if (this.twoPlayersMode) {
-          this.player1Turn = false;
-          this.player2Turn = true;
-          this.setLimitTimer(2);
+        if (this.player1Begin) {
+          this.tableau[lineIndex][caseIndex] = 2;
         }
         else {
-          this.player1Turn = false;
-          this.iaTurn = true;
-          this.limitTimerIa = Date.now();
-          this.callRustAi();
+          this.tableau[lineIndex][caseIndex] = 1;
         }
-      }
-      else if (this.iaTurn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
-        if (this.iaPawns == 0) {
-          this.endGame(0)
-          return;
-        }
-        this.tableau[lineIndex][caseIndex] = 2;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
           return;
         }
@@ -1206,33 +1188,17 @@ export class GameComponent {
         this.player1Turn = true;
         this.setLimitTimer(1);
       }
-      else if (this.iaTurn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
+      else if (this.iaTurn && this.twoIaMode && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
-        this.tableau[lineIndex][caseIndex] = 1;
-        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          return;
+        if (this.iaBegin) {
+          this.tableau[lineIndex][caseIndex] = 1;
         }
-        if (this.checkWinner(lineIndex, caseIndex)) {
-          this.setAllTurnFalse();
-          this.winner = "ia";
-          setTimeout(() => this.endGame(2), 1500);
-          return;
+        else {
+          this.tableau[lineIndex][caseIndex] = 2;
         }
-        this.iaPawns -= 1;
-        this.pawnsPlayed += 1;
-        this.iaTurn = false;
-        this.player1Turn = true;
-        this.setLimitTimer(1);
-      }
-      else if (this.iaTurn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
-        if (this.iaPawns == 0) {
-          this.endGame(0)
-          return;
-        }
-        this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
           return;
         }
@@ -1249,56 +1215,17 @@ export class GameComponent {
         this.limitTimerIa2 = Date.now();
         this.callRustAi();
       }
-      else if (this.iaTurn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
+      else if (this.ia2Turn && this.twoIaMode && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.iaPawns == 0) {
           this.endGame(0)
           return;
         }
-        this.tableau[lineIndex][caseIndex] = 2;
-        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          return;
+        if (this.iaBegin) {
+          this.tableau[lineIndex][caseIndex] = 2;
         }
-        if (this.checkWinner(lineIndex, caseIndex)) {
-          this.setAllTurnFalse();
-          this.winner = "ia";
-          setTimeout(() => this.endGame(2), 1500);
-          return;
+        else {
+          this.tableau[lineIndex][caseIndex] = 1;
         }
-        this.iaPawns -= 1;
-        this.pawnsPlayed += 1;
-        this.iaTurn = false;
-        this.ia2Turn = true;
-        this.limitTimerIa2 = Date.now();
-        this.callRustAi();
-      }
-      else if (this.ia2Turn && this.twoIaMode && this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
-        if (this.iaPawns == 0) {
-          this.endGame(0)
-          return;
-        }
-        this.tableau[lineIndex][caseIndex] = 2;
-        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          return;
-        }
-        if (this.checkWinner(lineIndex, caseIndex)) {
-          this.setAllTurnFalse();
-          this.winner = "ia2";
-          setTimeout(() => this.endGame(2), 1500);
-          return;
-        }
-        this.ia2Pawns -= 1;
-        this.pawnsPlayed += 1;
-        this.ia2Turn = false;
-        this.iaTurn = true;
-        this.limitTimerIa = Date.now();
-        this.callRustAi();
-      }
-      else if (this.ia2Turn && this.twoIaMode && !this.iaBegin && this.checkValidPush(lineIndex, caseIndex)) {
-        if (this.iaPawns == 0) {
-          this.endGame(0)
-          return;
-        }
-        this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
           return;
         }
@@ -1320,28 +1247,12 @@ export class GameComponent {
           this.endGame(0)
           return;
         }
-        this.tableau[lineIndex][caseIndex] = 2;
-        if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
-          return;
+        if (this.player1Begin) {
+          this.tableau[lineIndex][caseIndex] = 2;
         }
-        if (this.checkWinner(lineIndex, caseIndex)) {
-          this.setAllTurnFalse();
-          this.winner = "player2";
-          setTimeout(() => this.endGame(2), 1500);
-          return;
+        else {
+          this.tableau[lineIndex][caseIndex] = 1;
         }
-        this.player2Pawns -= 1;
-        this.pawnsPlayed += 1;
-        this.player2Turn = false;
-        this.player1Turn = true;
-        this.setLimitTimer(1);
-      }
-      else if (this.player2Turn && !this.twoIaMode && !this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
-        if (this.player2Pawns == 0) {
-          this.endGame(0)
-          return;
-        }
-        this.tableau[lineIndex][caseIndex] = 1;
         if (this.global.capturesRules && this.checkCapture(lineIndex, caseIndex)) {
           return;
         }
