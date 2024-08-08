@@ -37,6 +37,7 @@ export class GameComponent {
   public iaBegin: boolean | null = null;
   public firstTurn: boolean = true;
   public tableau: Array<number>[] = [];
+  public helpTab: Array<number>[] | null = null;
   public tmpWinnerTab: any = [];
   public winner: string = "";
   public winType: string = "";
@@ -209,6 +210,51 @@ export class GameComponent {
     
   }
 
+  public applyHelpLevelTwo() {
+    let currentPlayer = 0;
+    let currentOpponent = 0;
+
+    if ((this.player1Turn && this.player1Begin) || (!this.player1Turn && !this.player1Begin)) {
+      currentPlayer = 1;
+      currentOpponent = 2;
+    }
+    if ((this.player1Turn && !this.player1Begin) || (!this.player1Turn && this.player1Begin)) {
+      currentPlayer = 2;
+      currentOpponent = 1;
+    }
+
+    for (let lineIndex in this.helpTab!) {
+      for (let caseIndex in this.helpTab[lineIndex]) {
+        if (this.helpTab[lineIndex][caseIndex] == 0) {
+          this.helpTab[lineIndex][caseIndex] = currentPlayer;
+          if (this.helpCapture(parseInt(lineIndex), parseInt(caseIndex), currentPlayer, currentOpponent) == true) {
+            this.helpTab[lineIndex][caseIndex] = -2;
+          }
+          else {
+            this.helpTab[lineIndex][caseIndex] = 0;
+          }
+        }
+      }
+    }
+  }
+
+  public applyHelpLevelOne() {
+    this.helpTab = this.format_map(JSON.parse(JSON.stringify(this.tableau)));
+
+    for (let lineIndex in this.helpTab) {
+      for (let caseIndex in this.helpTab[lineIndex]) {
+        if (this.helpTab[lineIndex][caseIndex] == 0 && this.helpValidPush(parseInt(lineIndex), parseInt(caseIndex)) == false) {
+          this.helpTab[lineIndex][caseIndex] = -1;
+        }
+      }
+    }
+
+    if (this.global.helpLevel >= 2) {
+      this.applyHelpLevelTwo();
+    }
+    
+  }
+
   public setLimitTimer(index: number) {
     if (index == 1) {
       this.warningTimerPlayer1 = false;
@@ -218,6 +264,9 @@ export class GameComponent {
       else {
         this.limitTimerPlayer1 = Date.now() + this.global.timer;
       }
+      if (this.global.helpLevel >= 1) {
+        this.applyHelpLevelOne();
+      }
     }
     if (index == 2) {
       this.warningTimerPlayer2 = false;
@@ -226,6 +275,9 @@ export class GameComponent {
       }
       else {
         this.limitTimerPlayer2 = Date.now() + this.global.timer;
+      }
+      if (this.global.helpLevel >= 1) {
+        this.applyHelpLevelOne();
       }
     }
   }
@@ -438,6 +490,7 @@ export class GameComponent {
     this.timerIa2 = undefined;
     this.tmpWinner = false;
     this.tmpWinnerTab = [];
+    this.helpTab = null;
   }
 
   public checkDiagonalWinner1(lineIndex: number, caseIndex: number) {
@@ -840,6 +893,69 @@ export class GameComponent {
     return winner;
   }
 
+  public helpCapture(lineIndex: number, caseIndex: number, currentPlayer: number, currentOpponent: number) {
+    let caseElt = 0;
+    let lineElt = 0;
+    let diag1elt = 0;
+    let diag2elt = 0;
+    let lineDiag1 = this.diagonale1[lineIndex + caseIndex];
+    let lineDiag2 = this.diagonale2[lineIndex + (18 - caseIndex)];
+
+    if (!this.helpTab) {
+      return false;
+    }
+
+    while (caseElt < 16) {
+      if ((this.helpTab[lineIndex][caseElt] == currentPlayer || this.helpTab[lineIndex][caseElt] == (currentPlayer + 2)) &&
+        (this.helpTab[lineIndex][caseElt + 1] == currentOpponent || this.helpTab[lineIndex][caseElt + 1] == (currentOpponent + 2)) &&
+        (this.helpTab[lineIndex][caseElt + 2] == currentOpponent || this.helpTab[lineIndex][caseElt + 2] == (currentOpponent + 2)) &&
+        (this.helpTab[lineIndex][caseElt + 3] == currentPlayer || this.helpTab[lineIndex][caseElt + 3] == (currentPlayer + 2)) &&
+        (caseElt == caseIndex || (caseElt + 3) == caseIndex)) {
+          
+         return true;
+      }
+      caseElt++;
+    }
+
+    while (lineElt < 16) {
+      if ((this.helpTab[lineElt][caseIndex] == currentPlayer || this.helpTab[lineElt][caseIndex] == (currentPlayer + 2)) &&
+        (this.helpTab[lineElt + 1][caseIndex] == currentOpponent || this.helpTab[lineElt + 1][caseIndex] == (currentOpponent + 2)) &&
+        (this.helpTab[lineElt + 2][caseIndex] == currentOpponent || this.helpTab[lineElt + 2][caseIndex] == (currentOpponent + 2)) &&
+        (this.helpTab[lineElt + 3][caseIndex] == currentPlayer || this.helpTab[lineElt + 3][caseIndex] == (currentPlayer + 2)) &&
+        (lineElt == lineIndex || (lineElt + 3) == lineIndex)) {
+          
+         return true;
+      }
+      lineElt++;
+    }
+
+    while (diag1elt < (lineDiag1.length - 3)) {
+      if ((this.helpTab[lineDiag1[diag1elt][0]][lineDiag1[diag1elt][1]] == currentPlayer || this.helpTab[lineDiag1[diag1elt][0]][lineDiag1[diag1elt][1]] == (currentPlayer + 2)) &&
+        (this.helpTab[lineDiag1[diag1elt + 1][0]][lineDiag1[diag1elt + 1][1]] == currentOpponent || this.helpTab[lineDiag1[diag1elt + 1][0]][lineDiag1[diag1elt + 1][1]] == (currentOpponent + 2)) &&
+        (this.helpTab[lineDiag1[diag1elt + 2][0]][lineDiag1[diag1elt + 2][1]] == currentOpponent || this.helpTab[lineDiag1[diag1elt + 2][0]][lineDiag1[diag1elt + 2][1]] == (currentOpponent + 2)) &&
+        (this.helpTab[lineDiag1[diag1elt + 3][0]][lineDiag1[diag1elt + 3][1]] == currentPlayer || this.helpTab[lineDiag1[diag1elt + 3][0]][lineDiag1[diag1elt + 3][1]] == (currentPlayer + 2)) &&
+        ((lineDiag1[diag1elt][0] == lineIndex && lineDiag1[diag1elt][1] == caseIndex) || (lineDiag1[diag1elt + 3][0] == lineIndex && lineDiag1[diag1elt + 3][1] == caseIndex))) {
+
+         return true;
+      }
+      diag1elt++;
+    }
+
+    while (diag2elt < (lineDiag2.length - 3)) {
+      if ((this.helpTab[lineDiag2[diag2elt][0]][lineDiag2[diag2elt][1]] == currentPlayer || this.helpTab[lineDiag2[diag2elt][0]][lineDiag2[diag2elt][1]] == (currentPlayer + 2)) &&
+        (this.helpTab[lineDiag2[diag2elt + 1][0]][lineDiag2[diag2elt + 1][1]] == currentOpponent || this.helpTab[lineDiag2[diag2elt + 1][0]][lineDiag2[diag2elt + 1][1]] == (currentOpponent + 2)) &&
+        (this.helpTab[lineDiag2[diag2elt + 2][0]][lineDiag2[diag2elt + 2][1]] == currentOpponent || this.helpTab[lineDiag2[diag2elt + 2][0]][lineDiag2[diag2elt + 2][1]] == (currentOpponent + 2)) &&
+        (this.helpTab[lineDiag2[diag2elt + 3][0]][lineDiag2[diag2elt + 3][1]] == currentPlayer || this.helpTab[lineDiag2[diag2elt + 3][0]][lineDiag2[diag2elt + 3][1]] == (currentPlayer + 2)) &&
+        ((lineDiag2[diag2elt][0] == lineIndex && lineDiag2[diag2elt][1] == caseIndex) || (lineDiag2[diag2elt + 3][0] == lineIndex && lineDiag2[diag2elt + 3][1] == caseIndex))) {
+
+          return true;
+      }
+      diag2elt++;
+    }
+
+    return false;
+  }
+
   public incrementeCapture() {
     this.pawnsPlayed -= 2;
     if (this.player1Turn) {
@@ -1085,6 +1201,36 @@ export class GameComponent {
     return false
   }
 
+  public helpValidPush(lineIndex: number, caseIndex: number) {
+
+    let lines = [];
+
+    lines.push(this.tableau[lineIndex]);
+
+    if (this.global.doubleThreesRules && this.checkDoubleThrees(lineIndex, caseIndex)) {
+      return false;
+    }
+    if (this.firstTurn) {
+      if (caseIndex == 9 && lineIndex == 9) {
+        return true;
+      }
+      return false;
+    }
+
+    if (lineIndex > 0) {
+      lines.push(this.tableau[lineIndex - 1]);
+    }
+    if (lineIndex < 18) {
+      lines.push(this.tableau[lineIndex + 1]);
+    }
+    for (let line of lines) {
+      if (this.checkNeighborsCases(line, caseIndex)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public checkValidPush(lineIndex: number, caseIndex: number) {
 
     let lines = [];
@@ -1242,7 +1388,7 @@ export class GameComponent {
         this.limitTimerIa = Date.now();
         this.callRustAi();
       }
-      else if (this.player2Turn && !this.twoIaMode && this.player1Begin && this.checkValidPush(lineIndex, caseIndex)) {
+      else if (this.player2Turn && !this.twoIaMode && this.checkValidPush(lineIndex, caseIndex)) {
         if (this.player2Pawns == 0) {
           this.endGame(0)
           return;
@@ -1275,7 +1421,6 @@ export class GameComponent {
       }
     }
     this.isPlaying = false;
-    // console.log(this.tableau);
     // console.log(this.diagonale1);
     // console.log(this.diagonale2);
   }

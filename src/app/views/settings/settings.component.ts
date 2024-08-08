@@ -35,4 +35,8 @@ export class SettingsComponent {
   public changeTimerRules() {
     this.global.timerRules = !this.global.timerRules;
   }
+
+  public changeHelpLevel(level: number) {
+    this.global.helpLevel = level;
+  }
 }

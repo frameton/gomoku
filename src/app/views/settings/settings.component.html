@@ -83,4 +83,35 @@
             </div>
         </div> -->
     </div>
+
+    <div class="separator"></div>
+
+    <h2>Choisissez votre niveau d'assistance</h2>
+    <div class="rulesListDiv">
+        <div class="lineListDiv">
+            <div [ngClass]="global.helpLevel == 0 ? 'rulesDivActive' : 'rulesDiv'" (click)="changeHelpLevel(0)">
+                <h3>Pas d'assistance</h3>
+            </div>
+            <div [ngClass]="global.helpLevel == 1 ? 'rulesDivActive' : 'rulesDiv'" (click)="changeHelpLevel(1)">
+                <h3>Niveau 1</h3>
+            </div>
+            <div [ngClass]="global.helpLevel == 2 ? 'rulesDivActive' : 'rulesDiv'" (click)="changeHelpLevel(2)">
+                <h3>Niveau 2</h3>
+            </div>
+            <!-- <div [ngClass]="global.pawnsNumber == 40 ? 'rulesDivActive' : 'rulesDiv'" (click)="changePawns(40)">
+                <h3>40</h3>
+            </div> -->
+        </div>
+        <!-- <div class="lineListDiv">
+            <div [ngClass]="global.pawnsNumber == 60 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(60)">
+                <h3>60</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 361 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(361)">
+                <h3>361</h3>
+            </div>
+            <div [ngClass]="global.pawnsNumber == 9999 ? 'pawnDivActive' : 'pawnDiv'" (click)="changePawns(9999)">
+                <h3>9999</h3>
+            </div>
+        </div> -->
+    </div>
 </div>

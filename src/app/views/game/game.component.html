@@ -118,7 +118,8 @@
 
     <div class="plateauDiv">
         <div class="line" *ngFor="let ind of line">
-            <div class="case" [ngClass]="[(tableau[ind][ind2] == 3 || tableau[ind][ind2] == 4) ? 'tmpWinCase' : '', (tableau[ind][ind2] == 5 || tableau[ind][ind2] == 6) ? 'winCase' : '']"
+            <div class="case" [ngClass]="[(tableau[ind][ind2] == 3 || tableau[ind][ind2] == 4) ? 'tmpWinCase' : '', (tableau[ind][ind2] == 5 || tableau[ind][ind2] == 6) ? 'winCase' : '',
+            ((player1Turn || player2Turn) && helpTab && helpTab[ind][ind2] == -1) ? 'forbiddenCase' : '']"
             *ngFor="let ind2 of case" (click)="pushCase(ind, ind2)">
                 <div [ngClass]="[(player1Turn && player1Begin && (tableau[ind][ind2] > -3 && tableau[ind][ind2] < 1)) ? 'hoverBlackPawn' : '',
                                     (player1Turn && !player1Begin && (tableau[ind][ind2] > -3 && tableau[ind][ind2] < 1)) ? 'hoverWhitePawn' : '',
@@ -131,6 +132,7 @@
                                     tableau[ind][ind2] == -1 ? 'captureBlackPawn' : '',
                                     tableau[ind][ind2] == -2 ? 'captureWhitePawn' : '',
                                     tableau[ind][ind2] == 0 ? 'noPawn' : '']"></div>
+                <mat-icon class="helpCapture" *ngIf="(player1Turn || player2Turn) && helpTab && helpTab[ind][ind2] == -2">flash_on</mat-icon>
                 <div class="vertical"></div>
                 <div class="horizontal"></div>
                 <div class="point"

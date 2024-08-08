@@ -12,4 +12,5 @@ export class VariablesGlobales {
   capturesRules: boolean = true;
   timerRules: boolean = true;
   intervalId: any;
+  helpLevel: number = 0;
 }

@@ -482,6 +482,10 @@
                 background-color: $blue3 !important;
             }
 
+            .forbiddenCase {
+                background-color: $red1 !important;
+            }
+
             .case {
                 position: relative;
                 display: flex;
@@ -643,6 +647,19 @@
                     left: 50%;
                     border-radius: 3vh;
                     transform: translate(-50%, -50%);
+                    z-index: 10;
+                }
+
+                .helpCapture {
+                    display: flex;
+                    margin: 0px;
+                    position: absolute;
+                    height: 3.9vh;
+                    width: 3.9vh;
+                    font-size: 3.9vh;
+                    top: 0%;
+                    left: 0.2vh;
+                    color: $blue2;
                     z-index: 10;
                 }
 
