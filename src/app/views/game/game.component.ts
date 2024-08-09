@@ -341,7 +341,7 @@ export class GameComponent {
         // }
 
         if (this.iaMove) {
-          // console.log(this.iaMove);
+          console.log(this.iaMove);
 
           this.iaTurn = false;
 
@@ -352,9 +352,10 @@ export class GameComponent {
             this.callRustAi();
           }
           else {
-            this.player1Turn = true;
-            this.setLimitTimer(1);
-            this.iaMove = null;
+            this.pushCase(this.iaMove[0], this.iaMove[1]);
+            // this.player1Turn = true;
+            // this.setLimitTimer(1);
+            // this.iaMove = null;
           }
           
         }
@@ -1534,12 +1535,12 @@ export class GameComponent {
     }
 
     if (this.iaTurn) {
-      invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor})
+      invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor, timeLimitMs: (this.limitTimerIa! + 500)})
       .then((response) => this.iaMove = response)
     }
 
     else if (this.ia2Turn) {
-      invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor})
+      invoke('ai_move', { map: this.tableau, player1Capture: this.player1Capture, aiCapture: this.iaCapture, player1Stones: this.player1Pawns, aiStones: this.iaPawns, currentColor: currentColor, timeLimitMs: (this.limitTimerIa! + 500)})
     .then((response) => this.ia2Move = response)
     }
     
