@@ -19,6 +19,9 @@
             <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
                 <a (click)="redirect('/settings')" routerLinkActive="active" >Paramètres</a>
             </div>
+            <div [ngClass]="[reduceMode ? 'reduceMenu' : 'menu']">
+                <a (click)="redirect('/devgame')" routerLinkActive="active" >Dev</a>
+            </div>
         </div>
 
         <div class="app-navbar-user">

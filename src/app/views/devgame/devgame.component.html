@@ -1,0 +1,203 @@
+<div class="gameDiv">
+
+    <div class="startGameDiv" #startGameDiv>
+        <h2>Commencer une nouvelle partie</h2>
+        <div class="choicePlayersDiv">
+            <button class="playBtn" (click)="startGame(1)">
+                <h2>1&nbsp;joueur</h2>
+                <mat-icon>person</mat-icon>
+            </button>
+            <button class="playBtn" (click)="startGame(2)">
+                <h2>2&nbsp;joueurs</h2>
+                <mat-icon>people</mat-icon>
+            </button>
+            <button class="playBtn" (click)="startGame(3)">
+                <h2>IA vs IA</h2>
+            </button>
+        </div>
+    </div>
+
+    <div class="endGameDiv" #endGameDiv>
+        <ng-container *ngIf="winner == 'tie'">
+            <h2>Match nul !</h2>
+        </ng-container>
+        <ng-container *ngIf="winner == 'player1'">
+            <h2>{{ global.username }} vainqueur !</h2>
+        </ng-container>
+        <ng-container *ngIf="winner == 'player2'">
+            <h2>Le joueur 2 vainqueur !</h2>
+        </ng-container>
+        <ng-container *ngIf="winner == 'ia'">
+            <h2>L'ia a gagnée !</h2>
+        </ng-container>
+        <ng-container *ngIf="winner == 'ia2'">
+            <h2>L'ia2 a gagnée !</h2>
+        </ng-container>
+        <!-- <ng-container *ngIf="winType == 'diagonale'">
+            <h3>Victoire par la diagonale.</h3>
+        </ng-container>
+        <ng-container *ngIf="winType == 'horizontale'">
+            <h3>Victoire par l'horizontale.</h3>
+        </ng-container>
+        <ng-container *ngIf="winType == 'verticale'">
+            <h3>Victoire par la verticale.</h3>
+        </ng-container> -->
+        <ng-container *ngIf="winType == 'align'">
+            <h3>Victoire par alignement de 5 pions.</h3>
+        </ng-container>
+        <ng-container *ngIf="winType == 'capture'">
+            <h3>Victoire par 5 captures.</h3>
+        </ng-container>
+        <ng-container *ngIf="winType == 'breakWinCapture'">
+            <h3>Victoire par capture sur un alignement de 5 (avec 5 captures au compteur).</h3>
+        </ng-container>
+        <div class="continueDiv">
+            <button class="continueBtn" (click)="leaveGame()">
+                <h2>continuer</h2>
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+    </div>
+
+
+    <div class="firstPlayerBlock">
+        <div class="pyro" *ngIf="winner == 'ia2' || winner == 'player1'">
+            <div class="before"></div>
+            <div class="after"></div>
+        </div>
+        <div class="iaDiv" *ngIf="gameStarted && twoIaMode">
+            <div class="iaAnimations" [ngClass]="ia2Turn ? 'playerTurn' : ''">
+                <div class="ia2Animation bigIa2 blackIa">
+                    <div class="text">
+                        <h3>IA-2</h3>
+                    </div>
+                    <div *ngIf="startGame" class="inner one"></div>
+                    <div *ngIf="startGame" class="inner two"></div>
+                    <div *ngIf="startGame" class="inner three"></div>
+                </div>
+            </div>
+            <div [ngClass]="ia2Turn ? 'timerDivActive' : 'timerDiv'">
+                {{ timerIa2 |date:'mm.ss.SSS' }}
+            </div>
+            <div class="usernamePawnsDiv">
+                <div class="pawnsLogo" [ngClass]="[iaBegin == true ? 'whitePawns' : '',
+                                                    iaBegin == false ? 'blackPawns' : '',
+                                                    iaBegin == null ? 'pawns' : '']"></div>
+                <div class="pawnsNumber">
+                    {{ ia2Pawns }}
+                </div>
+            </div>
+            <div class="captureDiv" [ngClass]="[ia2Capture > 2 ? 'fireCaptureDiv' : '', ia2Capture == 5 ? 'winCaptureDiv' : '' ]">
+                <h3>{{ ia2Capture }}</h3>
+                <mat-icon>flash_on</mat-icon>
+            </div>
+        </div>
+
+        <div class="player1Div" #player1Div>
+            <div class="usernameDiv" [ngClass]="player1Turn ? 'playerTurn' : ''">
+                <mat-icon>person</mat-icon>
+                <h2>{{ global.username }}</h2>
+            </div>
+            <div [ngClass]="[player1Turn ? (warningTimerPlayer1 ? 'warningTimerDivActive' : 'timerDivActive') : (warningTimerPlayer1 ? 'warningTimerDiv' : 'timerDiv')]">
+                {{ timerPlayer1 | date:'mm.ss.SSS' }}
+            </div>
+            <div class="usernamePawnsDiv">
+                <div class="pawnsLogo" [ngClass]="[player1Begin == true ? 'blackPawns' : '',
+                                                    player1Begin == false ? 'whitePawns' : '',
+                                                    player1Begin == null ? 'pawns' : '']"></div>
+                <div class="pawnsNumber">
+                    {{ player1Pawns }}
+                </div>
+            </div>
+            <div class="captureDiv" [ngClass]="[player1Capture > 2 ? 'fireCaptureDiv' : '', player1Capture == 5 ? 'winCaptureDiv' : '' ]">
+                <h3>{{ player1Capture }}</h3>
+                <mat-icon>flash_on</mat-icon>
+            </div>
+        </div>
+    </div>
+
+    <div class="plateauDiv">
+        <div class="line" *ngFor="let ind of line">
+            <div class="case" [ngClass]="[(tableau[ind][ind2] == 3 || tableau[ind][ind2] == 4) ? 'tmpWinCase' : '', (tableau[ind][ind2] == 5 || tableau[ind][ind2] == 6) ? 'winCase' : '',
+            ((player1Turn || player2Turn) && helpTab && helpTab[ind][ind2] == -1) ? 'forbiddenCase' : '']"
+            *ngFor="let ind2 of case" (click)="pushCase(ind, ind2)">
+                <div [ngClass]="[(player1Turn && player1Begin && (tableau[ind][ind2] > -3 && tableau[ind][ind2] < 1)) ? 'hoverBlackPawn' : '',
+                                    (player1Turn && !player1Begin && (tableau[ind][ind2] > -3 && tableau[ind][ind2] < 1)) ? 'hoverWhitePawn' : '',
+                                    ((player2Turn || iaTurn) && player1Begin && (tableau[ind][ind2] > -3 && tableau[ind][ind2] < 1)) ? 'hoverWhitePawn' : '',
+                                    ((player2Turn || iaTurn) && !player1Begin && (tableau[ind][ind2] > -3 && tableau[ind][ind2] < 1)) ? 'hoverBlackPawn' : '',
+                                    ((player1Turn || iaTurn || player2Turn) && tableau[ind][ind2] == -3) ? 'wrongPushPawn' : '',
+                                    tableau[ind][ind2] != 0 ? 'noPawn' : '']"></div>
+                <div [ngClass]="[(tableau[ind][ind2] == 1 || tableau[ind][ind2] == 3 || tableau[ind][ind2] == 5) ? 'pushBlackPawn' : '',
+                                    (tableau[ind][ind2] == 2 || tableau[ind][ind2] == 4 || tableau[ind][ind2] == 6) ? 'pushWhitePawn' : '',
+                                    tableau[ind][ind2] == -1 ? 'captureBlackPawn' : '',
+                                    tableau[ind][ind2] == -2 ? 'captureWhitePawn' : '',
+                                    tableau[ind][ind2] == 0 ? 'noPawn' : '']"></div>
+                <mat-icon class="helpCapture" *ngIf="(player1Turn || player2Turn) && helpTab && helpTab[ind][ind2] == -2">flash_on</mat-icon>
+                <div class="vertical"></div>
+                <div class="horizontal"></div>
+                <div class="point"
+                *ngIf="(ind == 9 && ind2 == 9) || (ind == 3 && ind2 == 3) ||
+                (ind == 3 && ind2 == 15) || (ind == 15 && ind2 == 3) || (ind == 15 && ind2 == 15)
+                "></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="secondPlayerBlock">
+        <div class="pyro" *ngIf="winner == 'ia' || winner == 'player2'">
+            <div class="before"></div>
+            <div class="after"></div>
+        </div>
+        <div class="iaDiv" *ngIf="gameStarted && !twoPlayersMode">
+            <div class="iaAnimations" [ngClass]="iaTurn ? 'playerTurn' : ''">
+                <div class="iaAnimation bigIa2 blackIa">
+                    <div class="text">
+                        <h3>IA</h3>
+                    </div>
+                    <div *ngIf="startGame" class="inner one"></div>
+                    <div *ngIf="startGame" class="inner two"></div>
+                    <div *ngIf="startGame" class="inner three"></div>
+                </div>
+            </div>
+            <div [ngClass]="iaTurn ? 'timerDivActive' : 'timerDiv'">
+                {{ timerIa |date:'mm.ss.SSS' }}
+            </div>
+            <div class="usernamePawnsDiv">
+                <div class="pawnsLogo" [ngClass]="[((!twoPlayersMode && player1Begin == true) || (twoIaMode && !iaBegin)) ? 'whitePawns' : '',
+                                                    ((!twoPlayersMode && player1Begin == false) || (twoIaMode && iaBegin))  ? 'blackPawns' : '',
+                                                    (player1Begin == null && iaBegin == null) ? 'pawns' : '']"></div>
+                <div class="pawnsNumber">
+                    {{ iaPawns }}
+                </div>
+            </div>
+            <div class="captureDiv" [ngClass]="[iaCapture > 2 ? 'fireCaptureDiv' : '', iaCapture == 5 ? 'winCaptureDiv' : '' ]">
+                <h3>{{ iaCapture }}</h3>
+                <mat-icon>flash_on</mat-icon>
+            </div>
+        </div>
+    
+        <div class="player2Div" #player2Div>
+            <div class="usernameDiv" [ngClass]="player2Turn ? 'playerTurn' : ''">
+                <mat-icon>person</mat-icon>
+                <h2>Joueur2</h2>
+            </div>
+            <div [ngClass]="player2Turn ? (warningTimerPlayer2 ? 'warningTimerDivActive' : 'timerDivActive') : (warningTimerPlayer2 ? 'warningTimerDiv' : 'timerDiv')">
+                {{ timerPlayer2 |date:'mm.ss.SSS' }}
+            </div>
+            <div class="usernamePawnsDiv">
+                <div class="pawnsLogo" [ngClass]="[player1Begin == true ? 'whitePawns' : '',
+                                                    player1Begin == false ? 'blackPawns' : '',
+                                                    player1Begin == null ? 'pawns' : '']"></div>
+                <div class="pawnsNumber">
+                    {{ player2Pawns }}
+                </div>
+            </div>
+            <div class="captureDiv" [ngClass]="[player2Capture > 2 ? 'fireCaptureDiv' : '', player2Capture == 5 ? 'winCaptureDiv' : '' ]">
+                <h3>{{ player2Capture }}</h3>
+                <mat-icon>flash_on</mat-icon>
+            </div>
+        </div>
+    </div>
+
+
+</div>

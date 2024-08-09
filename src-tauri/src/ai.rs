@@ -4,7 +4,7 @@ use log::{info, LevelFilter};
 use env_logger::Env;
 
 #[tauri::command]
-pub fn ai_move(map: [[i32; 19]; 19], _player1_capture: i32, _ai_capture: i32, _player1_stones: i32, _ai_stones: i32, _current_color: i32, time_limit_ms: Option<u128>) -> ([i32; 2], u128) {
+pub fn ai_move(map: [[i32; 19]; 19], _player1_capture: i32, _ai_capture: i32, _player1_stones: i32, _ai_stones: i32, _current_color: i32, time_limit_ms: Option<u128>) -> [i32; 2] {
     let start_time = Instant::now();
     let time_limit = Duration::from_millis(time_limit_ms.unwrap_or(500) as u64);
 
@@ -28,14 +28,15 @@ pub fn ai_move(map: [[i32; 19]; 19], _player1_capture: i32, _ai_capture: i32, _p
 
                 if start_time.elapsed() > time_limit {
                     info!("Time limit reached. Best move so far: ({}, {}) with score {}", best_move[0], best_move[1], best_score);
-                    return (best_move, start_time.elapsed().as_millis());
+                    // return (best_move, start_time.elapsed().as_millis());
+                    return (best_move);
                 }
             }
         }
     }
 
     info!("Best move found: ({}, {}) with score {}", best_move[0], best_move[1], best_score);
-    (best_move, start_time.elapsed().as_millis())
+    best_move
 }
 
 fn minimax(map: [[i32; 19]; 19], depth: i32, alpha: i32, beta: i32, maximizing_player: bool, color: i32, start_time: Instant, time_limit: Duration) -> i32 {

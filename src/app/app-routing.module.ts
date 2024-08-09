@@ -4,6 +4,7 @@ import { WelcomeComponent } from './views/welcome/welcome.component';
 import { RulesComponent } from './views/rules/rules.component';
 import { GameComponent } from './views/game/game.component';
 import { SettingsComponent } from './views/settings/settings.component';
+import { DevgameComponent } from './views/devgame/devgame.component';
 
 const routes: Routes = [
   {
@@ -19,12 +20,16 @@ const routes: Routes = [
     component: GameComponent,
   },
   {
+    path: "devgame",
+    component: DevgameComponent,
+  },
+  {
     path: "settings",
     component: SettingsComponent,
   },
   {
     path: "",
-    redirectTo: 'welcome',
+    redirectTo: 'devgame',
     pathMatch: 'full'
   },
 

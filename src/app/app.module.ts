@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RulesComponent } from './views/rules/rules.component';
 import { GameComponent } from './views/game/game.component';
 import { SettingsComponent } from './views/settings/settings.component';
+import { DevgameComponent } from './views/devgame/devgame.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { SettingsComponent } from './views/settings/settings.component';
     RulesComponent,
     GameComponent,
     SettingsComponent,
+    DevgameComponent,
   ],
   imports: [
     BrowserModule,
